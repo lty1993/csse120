@@ -1,4 +1,6 @@
 csse120
 =======
 
-CSSE120 Project
+This is our CSSE120 class project.
+
+Author: Tianyu Liu, 
