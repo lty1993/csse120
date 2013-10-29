@@ -71,21 +71,33 @@ class Robot(object):
         """
         robotLogger.add(message, method_name, level, logger)
     def connect(self):
+        """
+        Connects the our_create module.
+        Contributor: Tianyu Liu
+        """
         if not self.connection:
             try:
-                self.connection = new_create.Create(self.port)
+                self.connection = our_create.Create(self.port)
             except Exception as e:
                 self._log("Error occured while connecting: %s" % e, "connect")
     def disconnect(self):
+        """
+        Detach from the our_create module.
+        Contributor: Tianyu Liu
+        """
         if self.connection:
             self.connection.stop()
             self.connection.shutdown()
             self.connection = None
     def stop(self):
+        """
+        Stops the robot.
+        Contributor: Xiangqing Zhang.
+        """
         assert self.connection, "Please create the connection first!"
         self.connection.stop()
 
-    def move_autonomously(self, speed, rotation, time):
+    def move_autonomously(self, speed, rotation, seconds):
         """
         Move autonomously at user-specified directional and rotational speed
         for a specific amount of time.
@@ -93,10 +105,9 @@ class Robot(object):
         Contributor: Matthew O'Brien
         """
         self.stop()
-        self._job(self._move_autonomously(), [speed, rotation, time])
-    def _move_autonomously(self, speed, rotation, time):
-        robot.go(speed, rotation)
-        time.sleep(time)
+        self._job(self._move_autonomously, [speed, rotation], life_span=seconds)
+    def _move_autonomously(self, speed, rotation):
+        self.connection.go(speed, rotation)
     def go_forward_until_black_line(self, speed, darkness=500):
         """
         Go forward at user-specified speed until WILMA reaches a black line,

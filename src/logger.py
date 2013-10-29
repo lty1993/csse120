@@ -36,7 +36,7 @@ class Logger(object):
                     else:
                         self.add("Cannot find the specific logger '%s'."%logger, "logger", "SEVERE", "ConsoleLogger")
             else:
-                print(self.logger_list)
+                # print(self.logger_list)
                 for each_logger_name in self.logger_list:
                     self.logger_list[each_logger_name].log(message, method_name, level)
         else:

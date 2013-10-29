@@ -1,19 +1,23 @@
-import Robot
+from Robot import Robot
 import tkinter
 from tkinter import ttk
 
 class Gui():
-  def __init__(self):
-      self.speed = None
-      self.rotation = None
-      self.time = None
+    def __init__(self):
+        self.speed = None
+        self.rotation = None
+        self.time = None
+        self.robot = Robot()
+        self.robot.connect()
+    def __exit__(self):
+        self.robot.disconnect()
 
 def main():
-    g = Gui()
     """
     A gui used to autonomously control the robot with user-specified speed, rotation, and time.
     Contributor: Matthew O'Brien
     """
+    g = Gui()
     root = tkinter.Tk()
     frame = ttk.Frame(root, padding=(20, 30), relief='raised')
     frame.grid()
@@ -41,7 +45,7 @@ def main():
 
     start_button = ttk.Button(frame, text='Start')
     start_button.grid(row=3, column=0)
-    start_button['command'] = lambda : Robot.move_autonomously(g.speed.get(), g.rotation.get(), g.time.get())
+    start_button['command'] = lambda : g.robot.move_autonomously(g.speed.get(), g.rotation.get(), g.time.get())
 
     root.mainloop()
 
