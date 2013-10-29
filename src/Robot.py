@@ -84,6 +84,19 @@ class Robot(object):
     def stop(self):
         assert self.connection, "Please create the connection first!"
         self.connection.stop()
+
+    def move_autonomously(self, speed, rotation, time):
+        """
+        Move autonomously at user-specified directional and rotational speed
+        for a specific amount of time.
+        Feature: 4a-1
+        Contributor: Matthew O'Brien
+        """
+        self.stop()
+        self._job(self._move_autonomously(), [speed, rotation, time])
+    def _move_autonomously(self, speed, rotation, time):
+        robot.go(speed, rotation)
+        time.sleep(time)
     def go_forward_until_black_line(self, speed, darkness=500):
         """
         Go forward at user-specified speed until WILMA reaches a black line,
@@ -98,7 +111,7 @@ class Robot(object):
         while True:
             sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])]
             if sensor_values[0] < darkness or sensor_values[0] > darkness: break
-        self.connection.stop()        
+        self.connection.stop()
     def __repr__(self):
         """
         Returns a string that represents this object.
