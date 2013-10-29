@@ -1,5 +1,6 @@
 import new_create as our_create
 from threading import Timer, Thread
+from logger import robotLogger
 from job import Job
 
 class Robot(object):
@@ -68,7 +69,7 @@ class Robot(object):
                         "test_function", logger="ConsoleLogger")
         Contributor: Xiangqing Zhang
         """
-        print(datetime.datetime.now().strftime("%H:%M:%S"), "[%s] <%s> %s"%(method_name, level, message))
+        robotLogger.add(message, method_name, level, logger)
     def connect(self):
         if not self.connection:
             try:

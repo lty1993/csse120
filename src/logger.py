@@ -111,6 +111,9 @@ class ConsoleLogger(LoggerType):
     def log(self, message, method_name, level="DEBUG"):
         if not level in self.ignore_level_list:
             print(datetime.datetime.now().strftime("%H:%M:%S"), "[%s] <%s> %s"%(method_name, level, message))
+            
+# Please ONLY use the robotLogger!
+robotLogger = Logger()
 
 def main():
     logger = Logger()
