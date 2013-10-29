@@ -87,22 +87,36 @@ class Robot(object):
     def go_forward_until_black_line(self, speed, darkness=500):
         """
         Go forward at user-specified speed until WILMA reaches a black line,
-        where the user specifies the “darkness” of the line.
+        where the user specifies the â€œdarknessâ€� of the line.
         Feature: 5a-1
         Contributor: Xiangqing Zhang
         """
-        self.stop() # TODO: Please add this to all methods that will be sent to our_create.
+        self.stop()  # TODO: Please add this to all methods that will be sent to our_create.
         self._job(self._go_forward_until_black_line, [speed, darkness])
     def _go_forward_until_black_line(self, speed, darkness):
         sensor = [our_create.cliff_front_left_signal, our_create.cliff_front_right_signal]
         # TODO: MARK.
-        
+
+    def move_autonomously(self, speed, rotation, time):
+        """
+        Move autonomously at user-specified directional and rotational speed
+        for a specific amount of time.
+        Feature: 4a-1
+        Contributor: Matthew O'Brien
+        """
+        self.stop()
+        self._job(self._move_autonomously(), [speed, rotation, time])
+    def _move_autonomously(self, speed, rotation, time):
+        robot.go(speed, rotation)
+        time.sleep(time)
+
     def __repr__(self):
         """
         Returns a string that represents this object.
         Contributor: Xiangqing Zhang
         """
         return 'An our_create robot connection with port {}'.format(self.port)
+
 print("hello")
 
 # git add .
