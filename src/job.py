@@ -20,22 +20,22 @@ class Job(threading.Thread):
     def run(self):
         self.job_function(*self.job_args, **self.job_kwargs)
         while 1:
-        	if self.terminated: break
+            if self.terminated: break
         Job.in_use = False
 
 def main():
-	import time
-	def add(a, b=1):
-		print(a + b)
-	job_1 = Job(add, [1])
-	job_1.start()
-	time.sleep(3)
-	job_1.terminated = True
-	while job_1.is_alive(): pass
-	job_1 = None
-	job_2 = Job(add, [2], {"b": 1})
-	job_2.start()
-	time.sleep(3)
+    import time
+    def add(a, b=1):
+        print(a + b)
+    job_1 = Job(add, [1])
+    job_1.start()
+    time.sleep(3)
+    job_1.terminated = True
+    while job_1.is_alive(): pass
+    job_1 = None
+    job_2 = Job(add, [2], {"b": 1})
+    job_2.start()
+    time.sleep(3)
 
 if __name__ == '__main__':
-	main()
+    main()
