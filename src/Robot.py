@@ -1,6 +1,6 @@
 import new_create as our_create
 from threading import Timer, Thread
-import datetime
+from logger import robotLogger
 from job import Job
 
 class Robot(object):
@@ -39,32 +39,37 @@ class Robot(object):
         assert self.connection, "Please create the connection first!"
         if self.job and self.job.is_alive():
             self._log("The robot connection is busy. Terminating the current process...", "_job", "WARNING")
-        	self._job_clear()
+            self._job_clear()
             self._log("The robot connection has been terminated successfully.", "SUCCESS")
         self.job = None
         self.job = Job(function, args=args, kwargs=kwargs)
         self.job.start()
         if life_span > 0:
-        	t = Timer(life_span, lambda: self._job_clear())
-        	t.start()
+            t = Timer(life_span, lambda: self._job_clear())
+            t.start()
     def _job_clear(self):
-    	"""
-    	Clears all jobs.
+        """
+        Clears all jobs.
         Contributor: Xiangqing Zhang
-    	"""
+        """
         self.job.terminated = True
         while self.job.is_alive(): pass
         self.connection.stop()
 
-    def _log(self, message, method_name, level="DEBUG"):
+    def _log(self, message, method_name, level="DEBUG", logger=None):
         """
-        The logger which logs and indicate events.
-        Levels should be "DEBUG", "WARNING", "SEVERE", "INFO" and "SUCCESS".
-        E.g. self._log("Lost connection.", "disconnect", "DEBUG")
+        Method that calls the logger to log events.
+        @Parameter message: A STR which is the content of the event to log.
+        @Parameter method_name: The name of the method where the event happens.
+        @Parameter level: Should be "DEBUG", "WARNING", "SEVERE", "INFO" and "SUCCESS".
+        @Parameter logger: Optional. By default, all loggers will be called to log the event.
+
+        E.g.1 self._log("Lost connection.", "disconnect", "DEBUG")
+        E.g.2 self._log("This will only be shown on the console.",
+                        "test_function", logger="ConsoleLogger")
         Contributor: Xiangqing Zhang
         """
-        # TODO: Move this method into a Logger class.
-        print(datetime.datetime.now().strftime("%H:%M:%S"), "[%s] <%s> %s"%(method_name, level, message))
+        robotLogger.add(message, method_name, level, logger)
     def connect(self):
         if not self.connection:
             try:
