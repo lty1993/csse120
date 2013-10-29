@@ -87,7 +87,7 @@ class Robot(object):
     def go_forward_until_black_line(self, speed, darkness=500):
         """
         Go forward at user-specified speed until WILMA reaches a black line,
-        where the user specifies the “darkness” of the line.
+        where the user specifies the "darkness" of the line.
         Feature: 5a-1
         Contributor: Xiangqing Zhang
         """
@@ -95,8 +95,10 @@ class Robot(object):
         self._job(self._go_forward_until_black_line, [speed, darkness])
     def _go_forward_until_black_line(self, speed, darkness):
         sensor = [our_create.cliff_front_left_signal, our_create.cliff_front_right_signal]
-        # TODO: MARK.
-        
+        while True:
+            sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])]
+            if sensor_values[0] < darkness or sensor_values[0] > darkness: break
+        self.connection.stop()        
     def __repr__(self):
         """
         Returns a string that represents this object.
