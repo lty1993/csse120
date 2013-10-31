@@ -13,7 +13,7 @@ class Gui():
         self.time = None
         self.robot = Robot()
         self.robot.connect()
-        
+
         self.root = tkinter.Tk()
         self.frame = ttk.Frame(self.root, padding=(20, 30), relief='raised')
         self.frame.grid()
@@ -44,7 +44,7 @@ class Gui():
         self.start_button['command'] = lambda : self.robot.move_autonomously(self.speed.get(), self.rotation.get(), self.time.get())
 
         self.root.mainloop()
-        
+
     def __exit__(self):
         self.robot.disconnect()
 

@@ -123,6 +123,16 @@ class Robot(object):
             sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])]
             if sensor_values[0] < darkness or sensor_values[0] > darkness: break
         self.connection.stop()
+    def log_information(self):
+        """
+        Displays team members' names and task-list reported hours that have been updated at each sprint.
+        Also displays a short fictitious bio on WILMA.
+        Functions to read in files are implented in this function.
+        Contributor: Matthew O'Brien
+        """
+        self._job(self._log_information(), args, kwargs, life_span=seconds)
+    def _log_information(self):
+        
     def __repr__(self):
         """
         Returns a string that represents this object.
