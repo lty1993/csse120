@@ -36,7 +36,7 @@ class Robot(object):
 
         Contributor: Xiangqing Zhang
         """
-        assert self.connection, "Please create the connection first!"
+        if not self.connection: self.connect()
         if self.job and self.job.is_alive():
             self._log("The robot connection is busy. Terminating the current process...", "_job", "WARNING")
             self._job_clear()
@@ -77,7 +77,9 @@ class Robot(object):
         """
         if not self.connection:
             try:
+                self._log("Establishing the connection...", "_job")
                 self.connection = our_create.Create(self.port)
+                self._log("Connection established.", "_job", "SUCCESS")
             except Exception as e:
                 self._log("Error occured while connecting: %s" % e, "connect")
     def disconnect(self):
@@ -86,7 +88,7 @@ class Robot(object):
         Contributor: Tianyu Liu
         """
         if self.connection:
-            self.connection.stop()
+            self._job_clear()
             self.connection.shutdown()
             self.connection = None
     def stop(self):
@@ -94,8 +96,7 @@ class Robot(object):
         Stops the robot.
         Contributor: Xiangqing Zhang.
         """
-        assert self.connection, "Please create the connection first!"
-        self.connection.stop()
+        if self.connection: self._job_clear()
 
     def move_autonomously(self, speed, rotation, seconds):
         """
@@ -104,6 +105,7 @@ class Robot(object):
         Feature: 4a-1
         Contributor: Matthew O'Brien
         """
+        robotLogger.add("%d,%d,%d"%(speed,rotation,seconds), "move_autonomously")
         self._job(self._move_autonomously, [speed, rotation], life_span=seconds)
     def _move_autonomously(self, speed, rotation):
         self.connection.go(speed, rotation)
@@ -114,12 +116,14 @@ class Robot(object):
         Feature: 5a-1
         Contributor: Xiangqing Zhang
         """
+        if darkness<=0: darkness = 500
         self._job(self._go_forward_until_black_line, [speed, darkness])
     def _go_forward_until_black_line(self, speed, darkness):
-        sensor = [our_create.cliff_front_left_signal, our_create.cliff_front_right_signal]
-        while True:
+        sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal]
+        while True and not self.job.terminated:
+            self._move_autonomously(speed, 0)
             sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])]
-            if sensor_values[0] < darkness or sensor_values[0] > darkness: break
+            if sensor_values[0] < darkness or sensor_values[1] < darkness: break
         self.connection.stop()
     def __repr__(self):
         """

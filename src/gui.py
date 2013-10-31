@@ -17,42 +17,45 @@ class Gui():
 
         self.root = tkinter.Tk("Robot GUI")
         self.frame = None
-        temp = """\
-<root>
-    <label name="speed_entry_label">
-        <text>Enter a speed: </text>
-    </label>
-    <entry name="speed_entry" width='30' />
-    <label name="rotation_entry_label">
-        <text>Enter a rotational speed: </text>
-    </label>
-    <entry name="time_entry" width='30' />
-    <label name="rotation_entry_label">
-        <text>Enter a time: </text>
-    </label>
-    <entry name="time_entry" width='30' />
-</root>
-"""
-        self.add_widget(XML(temp), self.root).pack()
+        FO = open("mainwindow.xml", "r")
+        xml_string = FO.read()
+        FO.close()
+        self.add_widget(XML(xml_string), self.root).pack()
+
+        self.config_widget("btn_connect", {"command": lambda: self.robot.connect()})
+        self.config_widget("btn_stop", {"command": lambda: self.robot.stop()})
 
         self.speed = tkinter.IntVar()
-        self.frame.children['speed_entry'].config(textvariable=self.speed)
+        self.config_widget("speed_entry", {"textvariable": self.speed})
 
         self.rotation = tkinter.IntVar()
-        self.frame.children["rotation_entry"].config(textvariable=self.rotation)
+        self.config_widget("rotation_entry", {"textvariable": self.rotation})
 
         self.time = tkinter.IntVar()
-        self.frame.children["time_entry"].config(textvariable=self.time)
+        self.config_widget("time_entry", {"textvariable": self.time})
 
-        # self.btn_move_autonomously = ttk.Button(self.frame, text='move_autonomously')
-        # self.btn_move_autonomously.grid(row=3, column=0)
-        # self.btn_move_autonomously['command'] = lambda : self.robot.move_autonomously(self.speed.get(), self.rotation.get(), self.time.get())
+        self.config_widget("btn_move_autonomously", {"command": lambda: self.robot.move_autonomously(self.speed.get(), self.rotation.get(), self.time.get())})
 
-        # self.btn_go_forward_until_black_line = ttk.Button(self.frame, text="go_forward_until_black_line")
-        # self.btn_go_forward_until_black_line.grid(row=4, column=0)
-        # self.btn_go_forward_until_black_line['command'] = lambda : self.robot.go_forward_until_black_line(self.speed.get(), )
+        self.darkness = tkinter.IntVar()
+        self.config_widget("darkness_entry", {"textvariable": self.darkness})
+
+        self.config_widget("btn_go_forward_until_black_line", {"command": lambda: self.robot.go_forward_until_black_line(self.speed.get(), self.darkness.get())})
 
         self.root.mainloop()
+
+    def config_widget(self, widget_name, widget_options):
+        """
+        Config the widget.
+        @Parameter widget_name: The widget's name.
+        @Parameter widget_options: A DICTIONARY that contains options.
+
+        E.g. self.config_widget("time_entry", {textvariable: self.time})
+             is equivalent to
+             time_entry["textvariable"] = self.time
+        Contributor: Xiangqing Zhang
+        """
+        assert self.frame, "Please initialize the GUI!"
+        self.frame.children[widget_name].config(**widget_options)
 
     def add_widget(self, widget_xml, top_frame=None):
         """

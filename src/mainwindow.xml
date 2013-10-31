@@ -1,60 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1024</width>
-    <height>768</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <widget class="QWidget" name="centralWidget">
-   <widget class="QFrame" name="frame">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>1001</width>
-      <height>681</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1024</width>
-     <height>19</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
- </widget>
- <layoutdefault spacing="6" margin="11"/>
- <resources/>
- <connections/>
-</ui>
+<root>
+    <button name="btn_connect" text="Connect"></button>
+    <button name="btn_stop" text="Stop"></button>
+    <label name="speed_entry_label">
+        <text>Enter a speed: </text>
+    </label>
+    <entry name="speed_entry" width='30' />
+    <label name="rotation_entry_label">
+        <text>Enter a rotational speed: </text>
+    </label>
+    <entry name="rotation_entry" width='30' />
+    <label name="rotation_entry_label">
+        <text>Enter a time: </text>
+    </label>
+    <entry name="time_entry" width='30' />
+    <button name="btn_move_autonomously" text="Move Autonomously"></button>
+    <label name="darkness_entry_label">
+        <text>Enter a darkness: </text>
+    </label>
+    <entry name="darkness_entry" width='30' />
+    <button name="btn_go_forward_until_black_line" text="Go Forward Until Black Line"></button>
+</root>
