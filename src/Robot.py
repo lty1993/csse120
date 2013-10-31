@@ -104,7 +104,6 @@ class Robot(object):
         Feature: 4a-1
         Contributor: Matthew O'Brien
         """
-        self.stop()
         self._job(self._move_autonomously, [speed, rotation], life_span=seconds)
     def _move_autonomously(self, speed, rotation):
         self.connection.go(speed, rotation)
@@ -115,7 +114,6 @@ class Robot(object):
         Feature: 5a-1
         Contributor: Xiangqing Zhang
         """
-        self.stop() # TODO: Please add this to all methods that will be sent to our_create.
         self._job(self._go_forward_until_black_line, [speed, darkness])
     def _go_forward_until_black_line(self, speed, darkness):
         sensor = [our_create.cliff_front_left_signal, our_create.cliff_front_right_signal]
