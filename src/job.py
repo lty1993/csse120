@@ -22,6 +22,8 @@ class Job(threading.Thread):
         while 1:
             if self.terminated: break
         Job.in_use = False
+    def __exit__(self):
+        Job.in_use = False
 
 def main():
     import time

@@ -1,0 +1,22 @@
+<root>
+    <button name="btn_connect" text="Connect"></button>
+    <button name="btn_stop" text="Stop"></button>
+    <label name="speed_entry_label">
+        <text>Enter a speed: </text>
+    </label>
+    <entry name="speed_entry" width='30' />
+    <label name="rotation_entry_label">
+        <text>Enter a rotational speed: </text>
+    </label>
+    <entry name="rotation_entry" width='30' />
+    <label name="rotation_entry_label">
+        <text>Enter a time: </text>
+    </label>
+    <entry name="time_entry" width='30' />
+    <button name="btn_move_autonomously" text="Move Autonomously"></button>
+    <label name="darkness_entry_label">
+        <text>Enter a darkness: </text>
+    </label>
+    <entry name="darkness_entry" width='30' />
+    <button name="btn_go_forward_until_black_line" text="Go Forward Until Black Line"></button>
+</root>
