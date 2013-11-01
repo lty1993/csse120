@@ -38,12 +38,9 @@ class Gui():
 
         self.config_widget("btn_move_autonomously", {"command": lambda: self.robot.move_autonomously(self.speed.get(), self.rotation.get(), self.time.get())})
 
-        self.x = tkinter.IntVar()
-        self.y = tkinter.IntVar()
-        self.config_widget("grid_x_entry", {"textvariable": self.x})
-        self.config_widget("grid_y_entry", {"textvariable": self.y})
-
-        self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.x.get(), self.y.get())})
+        self.coordinates = tkinter.StringVar()
+        self.config_widget("grid_entry", {"textvariable": self.coordinates})
+        self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.coordinates.get())})
 
         self.darkness = tkinter.IntVar()
         self.config_widget("darkness_entry", {"textvariable": self.darkness})

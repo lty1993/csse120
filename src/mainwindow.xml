@@ -21,10 +21,9 @@
     <entry name="darkness_entry" width='30' />
     <button name="btn_go_forward_until_black_line" text="Go Forward Until Black Line"></button>
     <label name="grid_entry_label">
-        <text>Enter an x and y coordinate: </text>
+        <text>Enter a list of x, y coordinates: </text>
     </label>
-    <entry name="grid_x_entry" width='30' />
-    <entry name="grid_y_entry" width='30' />
+    <entry name="grid_entry" width='30' />
     <button name="grid_button" text="Move to this coordinate"></button>
     <label name="bytecode_entry_label" text="Enter a bytecode:"></label>
     <entry name="bytecode_entry" width='30' />

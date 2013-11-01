@@ -3,6 +3,7 @@ from threading import Timer, Thread
 from logger import robotLogger
 from job import Job
 import random
+import time
 
 class Robot(object):
     """
@@ -131,7 +132,7 @@ class Robot(object):
         User can make WILMA start/stop emitting a user-specified IR signal.
         WILMA displays whatever IR signal it is currently hearing.
         WILMA can “chat” via user-specified IR numbers sent synchronously:
-        WILMA starts sending, then listens until it hears something from the other robot, 
+        WILMA starts sending, then listens until it hears something from the other robot,
         then starts sending something different, then listens until it hears something from the other robot, etc.
         Feature: 8a-1
         Contributor: Xiangqing Zhang
@@ -144,9 +145,9 @@ class Robot(object):
             self.robot.sendIR(bytecode)
             while True:
                 sensor_values = self.connection.getSensor(sensor)
-                if sensor_values!=255: break
+                if sensor_values != 255: break
             temp_bytecode = random.randint(0, 255)
-            while temp_bytecode==bytecode:
+            while temp_bytecode == bytecode:
                 temp_bytecode = random.randint(0, 255)
             bytecode = temp_bytecode
     def log_information(self):
@@ -163,19 +164,63 @@ class Robot(object):
         xml_string = FO.read()
         FO.close()
         print(xml_string)  # TODO: Add team names and task-list reported hours
-    def grid_movement(self, x, y, seconds):
+    def grid_movement(self, coordinates):
         """
         Moves robot to user-specified coordinates on an imaginary grid.
         Contributor: Matthew O'Brien
         """
-        robotLogger.add("%d,%d" % (x, y), "grid_movement")
-        self._job(self._grid_movement, [x, y], {"seconds": 2})
-    def _grid_movement(self, x, y):
+        coor_list = []
+        coordinates_list = coordinates.split()
+#         for coordinate in coordinates_list:
+#             a = int(coordinate)
+#             coor_list.append(a)
+
+        for coordinate in coordinates_list:
+            self._job(self._grid_movement, [coordinate])
+        robotLogger.add("%s" % (coordinates), "grid_movement")
+
+    def _grid_movement(self, coordinate):
         x_initial = 0
         y_initial = 0
-        speed = 20
-        rotation = 90
-        self.connection.go(speed, rotation)
+        speed = 100
+        rotation_left = 90
+        rotation_right = -90
+        x = int(coordinate[0])
+        y = int(coordinate[1])
+
+        if x > x_initial:
+            self.connection.go(speed, 0)
+            time.sleep(x - x_initial)
+        elif x < x_initial:
+            self.connection.go(0, rotation_left)
+            time.sleep(2)
+            self.connection.go(speed, 0)
+            time.sleep(x_initial - x)
+        else:
+            pass
+
+        if y > y_initial:
+            self.connection.go(0, rotation_left)
+            time.sleep(1)
+            self.connection.go(speed, 0)
+            time.sleep(y - y_initial)
+        elif y < y_initial:
+            self.connection.go(0, rotation_right)
+            self.connection.go(speed, 0)
+            time.sleep(y_initial - y)
+        else:
+            pass
+
+        if y > y_initial:
+            self.connection.go(0, rotation_right)
+            time.sleep(1)
+        elif y < y_initial:
+            self.connection.go(0, rotation_left)
+            time.sleep(1)
+        else:
+            pass
+        self.connection.stop()
+
     def __repr__(self):
         """
         Returns a string that represents this object.
