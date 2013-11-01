@@ -157,9 +157,25 @@ class Robot(object):
         Feature: 1a-1
         Contributor: Matthew O'Brien
         """
-        self._job(self._log_information(), args, kwargs, life_span=seconds)
+        self._job(self._log_information)
     def _log_information(self):
-        pass
+        FO = open("WILMAbio.wilma", "r")
+        xml_string = FO.read()
+        FO.close()
+        print(xml_string)  # TODO: Add team names and task-list reported hours
+    def grid_movement(self, x, y, seconds):
+        """
+        Moves robot to user-specified coordinates on an imaginary grid.
+        Contributor: Matthew O'Brien
+        """
+        robotLogger.add("%d,%d" % (x, y), "grid_movement")
+        self._job(self._grid_movement, [x, y], {"seconds": 2})
+    def _grid_movement(self, x, y):
+        x_initial = 0
+        y_initial = 0
+        speed = 20
+        rotation = 90
+        self.connection.go(speed, rotation)
     def __repr__(self):
         """
         Returns a string that represents this object.
