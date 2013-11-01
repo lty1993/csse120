@@ -1,6 +1,7 @@
 <root>
     <button name="btn_connect" text="Connect"></button>
     <button name="btn_stop" text="Stop"></button>
+    <button name="wilma_bio" text="WILMA's Bio"></button>
     <label name="speed_entry_label">
         <text>Enter a speed: </text>
     </label>
@@ -19,4 +20,10 @@
     </label>
     <entry name="darkness_entry" width='30' />
     <button name="btn_go_forward_until_black_line" text="Go Forward Until Black Line"></button>
+    <label name="grid_entry_label">
+        <text>Enter an x and y coordinate: </text>
+    </label>
+    <entry name="grid_x_entry" width='30' />
+    <entry name="grid_y_entry" width='30' />
+    <button name="grid_button" text="Move to this coordinate"></button>
 </root>
