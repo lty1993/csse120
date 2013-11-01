@@ -7,7 +7,7 @@ class Gui():
     def __init__(self):
         """
         A gui used to autonomously control the robot with user-specified speed, rotation, and time.
-        Contributor: Matthew O'Brien, Xiangqing Zhang
+        Contributor: Matthew O'Brien, Xiangqing Zhang, Tianyu Liu
         """
         self.speed = None
         self.rotation = None
@@ -40,6 +40,11 @@ class Gui():
         self.config_widget("darkness_entry", {"textvariable": self.darkness})
 
         self.config_widget("btn_go_forward_until_black_line", {"command": lambda: self.robot.go_forward_until_black_line(self.speed.get(), self.darkness.get())})
+
+        self.bytecode = tkinter.IntVar()
+        self.config_widget("bytecode_entry", {"textvariable": self.bytecode})
+
+        self.config_widget("btn_bytecode_entry", {"command": lambda: self.robot.chat_with_another_robot(self.bytecode.get())})
 
         self.root.mainloop()
 
