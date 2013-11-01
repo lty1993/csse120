@@ -2,6 +2,7 @@ from xml.etree.ElementTree import XML
 from Robot import Robot
 import tkinter
 from tkinter import ttk
+from logger import robotLogger
 
 class Gui():
     def __init__(self):
@@ -56,9 +57,13 @@ class Gui():
         self.config_widget("btn_bytecode_entry", {"command": lambda: self.robot.chat_with_another_robot(self.bytecode.get())})
 
         self.log_frame = ttk.Frame(self.root)
-        self.log_label = tkinter.Text(self.root, width=400, height=200, wrap=tkinter.WORD)
-        self.log_label.grid()
+        self.log_frame.grid()
+        self.log_text = tkinter.Text(self.log_frame, width=150, height=20, wrap=tkinter.CHAR, state=tkinter.DISABLED)
+        # self.log_text.insert(tkinter.INSERT, "DEBUG")
+        self.log_text.grid()
 
+        robotLogger.logger_list["GuiLogger"].gui = self
+        print(self, robotLogger.logger_list["GuiLogger"].gui)
         self.root.mainloop()
 
     def config_widget(self, widget_name, widget_options):
@@ -110,7 +115,6 @@ class Gui():
 
 def main():
     g = Gui()
-
 
 if __name__ == '__main__':
     main()

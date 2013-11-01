@@ -1,4 +1,5 @@
 import datetime
+from tkinter import INSERT, END
 
 class Logger(object):
     """
@@ -8,7 +9,8 @@ class Logger(object):
     def __init__(self):
         super().__init__()
         self.logger_list = {
-            "ConsoleLogger": ConsoleLogger()
+            "ConsoleLogger": ConsoleLogger(),
+            "GuiLogger": GuiLogger()
         }
     def add(self, message, method_name, level="DEBUG", logger=None):
         """
@@ -111,7 +113,20 @@ class ConsoleLogger(LoggerType):
     def log(self, message, method_name, level="DEBUG"):
         if not level in self.ignore_level_list:
             print(datetime.datetime.now().strftime("%H:%M:%S"), "[%s] <%s> %s"%(method_name, level, message))
-            
+
+class GuiLogger(LoggerType):
+    """
+    The logger that shows the event in the GUI.
+    """
+    def __init__(self):
+        super().__init__()
+        self.gui = None
+    def log(self, message, method_name, level="DEBUG"):
+        print(self.gui)
+        if self.gui:
+            if not level in self.ignore_level_list:
+                self.gui.log_text.insert(INSERT, datetime.datetime.now().strftime("%H:%M:%S") + " [%s] <%s> %s\r\n"%(method_name, level, message))
+
 # Please ONLY use the robotLogger!
 robotLogger = Logger()
 
@@ -120,5 +135,6 @@ def main():
     logger.add_ignore("ConsoleLogger", "DEBUG")
     logger.add("test", "aaa", "DEBUG")
     logger.add("test", "aaa", "DEBUG", "NotExistLogger")
+
 if __name__ == '__main__':
     main()

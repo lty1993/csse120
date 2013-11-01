@@ -182,7 +182,7 @@ class Robot(object):
         Contributor: Xiangqing Zhang
         """
         return 'An our_create robot connection with port {}'.format(self.port)
-print("hello")
+# print("hello")
 
 # git add .
 # git status
