@@ -2,6 +2,7 @@ import new_create as our_create
 from threading import Timer, Thread
 from logger import robotLogger
 from job import Job
+import random
 
 class Robot(object):
     """
@@ -125,11 +126,35 @@ class Robot(object):
             sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])]
             if sensor_values[0] < darkness or sensor_values[1] < darkness: break
         self.connection.stop()
+    def chat_with_another_robot(self, bytecode):
+        """
+        User can make WILMA start/stop emitting a user-specified IR signal.
+        WILMA displays whatever IR signal it is currently hearing.
+        WILMA can “chat” via user-specified IR numbers sent synchronously:
+        WILMA starts sending, then listens until it hears something from the other robot, 
+        then starts sending something different, then listens until it hears something from the other robot, etc.
+        Feature: 8a-1
+        Contributor: Xiangqing Zhang
+        """
+        # TODO: Test in the REAL robot!
+        self._job(self._chat_with_another_robot, bytecode)
+    def _chat_with_another_robot(self, bytecode):
+        sensor = our_create.Sensors.ir_byte
+        while True:
+            self.robot.sendIR(bytecode)
+            while True:
+                sensor_values = self.connection.getSensor(sensor)
+                if sensor_values!=255: break
+            temp_bytecode = random.randint(0, 255)
+            while temp_bytecode==bytecode:
+                temp_bytecode = random.randint(0, 255)
+            bytecode = temp_bytecode
     def log_information(self):
         """
         Displays team members' names and task-list reported hours that have been updated at each sprint.
         Also displays a short fictitious bio on WILMA.
         Functions to read in files are implented in this function.
+        Feature: 1a-1
         Contributor: Matthew O'Brien
         """
         self._job(self._log_information)

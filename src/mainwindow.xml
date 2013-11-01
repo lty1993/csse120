@@ -26,4 +26,7 @@
     <entry name="grid_x_entry" width='30' />
     <entry name="grid_y_entry" width='30' />
     <button name="grid_button" text="Move to this coordinate"></button>
+    <label name="bytecode_entry_label" text="Enter a bytecode:"></label>
+    <entry name="bytecode_entry" width='30' />
+    <button name="btn_bytecode_entry" text="Sending Bytecode"></button>
 </root>
