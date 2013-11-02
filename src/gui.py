@@ -25,6 +25,8 @@ class Gui():
         self.config_widget("btn_connect", {"command": lambda: self.robot.connect()})
         self.config_widget("btn_stop", {"command": lambda: self.robot.stop()})
 
+        self.config_widget("team_info", {"command": lambda: self.robot.team_info()})
+
         self.config_widget("wilma_bio", {"command": lambda: self.robot.log_information()})
 
         self.speed = tkinter.IntVar()

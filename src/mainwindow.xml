@@ -1,6 +1,7 @@
 <root>
     <button name="btn_connect" text="Connect"></button>
     <button name="btn_stop" text="Stop"></button>
+    <button name="team_info" text="Team Info"></button>
     <button name="wilma_bio" text="WILMA's Bio"></button>
     <label name="speed_entry_label">
         <text>Enter a speed: </text>
