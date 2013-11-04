@@ -1,2 +1,2 @@
 Name: Matthew O'Brien
-Total Working Hours for Sprint 1: 8 hrs
+Total Working Hours for Sprint 1: 9 hrs
