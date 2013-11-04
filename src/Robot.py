@@ -3,6 +3,7 @@ from threading import Timer, Thread
 from logger import robotLogger
 from job import Job
 import random
+import time
 
 class Robot(object):
     """
@@ -131,7 +132,7 @@ class Robot(object):
         User can make WILMA start/stop emitting a user-specified IR signal.
         WILMA displays whatever IR signal it is currently hearing.
         WILMA can “chat” via user-specified IR numbers sent synchronously:
-        WILMA starts sending, then listens until it hears something from the other robot, 
+        WILMA starts sending, then listens until it hears something from the other robot,
         then starts sending something different, then listens until it hears something from the other robot, etc.
         Feature: 8a-1
         Contributor: Xiangqing Zhang
@@ -144,9 +145,9 @@ class Robot(object):
             self.robot.sendIR(bytecode)
             while True:
                 sensor_values = self.connection.getSensor(sensor)
-                if sensor_values!=255: break
+                if sensor_values != 255: break
             temp_bytecode = random.randint(0, 255)
-            while temp_bytecode==bytecode:
+            while temp_bytecode == bytecode:
                 temp_bytecode = random.randint(0, 255)
             bytecode = temp_bytecode
     def follow_with_black_line(self):
@@ -155,23 +156,105 @@ class Robot(object):
         ls = our_create.Sensors.
         rs = our_create.Sensors.
     def log_information(self):
+        pass
+    def team_info(self):
         """
         Displays team members' names and task-list reported hours that have been updated at each sprint.
-        Also displays a short fictitious bio on WILMA.
         Functions to read in files are implented in this function.
-        Feature: 1a-1
+        Feature 1a-1
         Contributor: Matthew O'Brien
         """
-        self._job(self._log_information(), args, kwargs, life_span=seconds)
+        self._job(self._team_info)
+    def _team_info(self):
+        FO = open("tasks-1.r", "r")
+        tasks1 = FO.read()
+        FO.close()
+        print(tasks1)
+        FO = open("tasks-2.r", "r")
+        tasks2 = FO.read()
+        FO.close()
+        print(tasks2)
+        FO = open("tasks-3.r", "r")
+        tasks3 = FO.read()
+        FO.close()
+        print(tasks3)
+    def log_information(self):
+        """
+        Also displays a short fictitious bio on WILMA.
+        Functions to read in files are implented in this function.
+        Feature: 1b-1
+        Contributor: Matthew O'Brien
+        """
+        self._job(self._log_information)
     def _log_information(self):
-        pass
+        FO = open("WILMAbio.wilma", "r")
+        wilma_bio = FO.read()
+        FO.close()
+    def grid_movement(self, coordinates):
+        """
+        Moves robot to user-specified coordinates on an imaginary grid.
+        Feature 7a-1
+        Contributor: Matthew O'Brien
+        """
+        coor_list = []
+        coordinates_list = coordinates.split()
+        coordinates_list.insert(0, '00')
+
+        for k in range(1, len(coordinates_list)):
+            location = coordinates_list[k - 1]
+            coordinate = coordinates_list[k]
+            self._job(self._grid_movement, [coordinate, location])
+        robotLogger.add("%s%s" % (coordinates, location), "grid_movement")
+
+    def _grid_movement(self, coordinate, location):
+        x_initial = int(location[0])
+        y_initial = int(location[1])
+        speed = 100
+        rotation_left = 90
+        rotation_right = -90
+        x = int(coordinate[0])
+        y = int(coordinate[1])
+
+        if x > x_initial:
+            self.connection.go(speed, 0)
+            time.sleep(x - x_initial)
+        elif x < x_initial:
+            self.connection.go(0, rotation_left)
+            time.sleep(2)
+            self.connection.go(speed, 0)
+            time.sleep(x_initial - x)
+        else:
+            pass
+
+        if y > y_initial:
+            self.connection.go(0, rotation_left)
+            time.sleep(1)
+            self.connection.go(speed, 0)
+            time.sleep(y - y_initial)
+        elif y < y_initial:
+            self.connection.go(0, rotation_right)
+            self.connection.go(speed, 0)
+            time.sleep(y_initial - y)
+        else:
+            pass
+
+        if y > y_initial:
+            self.connection.go(0, rotation_right)
+            time.sleep(1)
+        elif y < y_initial:
+            self.connection.go(0, rotation_left)
+            time.sleep(1)
+        else:
+            pass
+        self.connection.stop()
+
     def __repr__(self):
         """
         Returns a string that represents this object.
         Contributor: Xiangqing Zhang
         """
         return 'An our_create robot connection with port {}'.format(self.port)
-print("hello")
+# print("hello")
 
 # git add .
 # git status

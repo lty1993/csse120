@@ -2,6 +2,7 @@ from xml.etree.ElementTree import XML
 from Robot import Robot
 import tkinter
 from tkinter import ttk
+from logger import robotLogger
 
 class Gui():
     def __init__(self):
@@ -20,10 +21,14 @@ class Gui():
         FO = open("mainwindow.xml", "r")
         xml_string = FO.read()
         FO.close()
-        self.add_widget(XML(xml_string), self.root).pack()
+        self.add_widget(XML(xml_string), self.root).grid()
 
         self.config_widget("btn_connect", {"command": lambda: self.robot.connect()})
         self.config_widget("btn_stop", {"command": lambda: self.robot.stop()})
+
+        self.config_widget("team_info", {"command": lambda: self.robot.team_info()})
+
+        self.config_widget("wilma_bio", {"command": lambda: self.robot.log_information()})
 
         self.speed = tkinter.IntVar()
         self.config_widget("speed_entry", {"textvariable": self.speed})
@@ -36,6 +41,10 @@ class Gui():
 
         self.config_widget("btn_move_autonomously", {"command": lambda: self.robot.move_autonomously(self.speed.get(), self.rotation.get(), self.time.get())})
 
+        self.coordinates = tkinter.StringVar()
+        self.config_widget("grid_entry", {"textvariable": self.coordinates})
+        self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.coordinates.get())})
+
         self.darkness = tkinter.IntVar()
         self.config_widget("darkness_entry", {"textvariable": self.darkness})
 
@@ -46,6 +55,14 @@ class Gui():
 
         self.config_widget("btn_bytecode_entry", {"command": lambda: self.robot.chat_with_another_robot(self.bytecode.get())})
 
+        self.log_frame = ttk.Frame(self.root)
+        self.log_frame.grid()
+        self.log_text = tkinter.Text(self.log_frame, width=150, height=20, wrap=tkinter.CHAR, state=tkinter.DISABLED)
+        # self.log_text.insert(tkinter.INSERT, "DEBUG")
+        self.log_text.grid()
+
+        robotLogger.logger_list["GuiLogger"].gui = self
+        print(self, robotLogger.logger_list["GuiLogger"].gui)
         self.root.mainloop()
 
     def config_widget(self, widget_name, widget_options):
@@ -85,7 +102,7 @@ class Gui():
                 opt_list = opt_list.copy()
                 for each_widget in widget_xml:
                     opt_list[each_widget.tag] = each_widget.text
-                    print(each_widget.tag, "," , each_widget.text)
+                    # print(each_widget.tag, "," , each_widget.text)
             return getattr(ttk, widget_xml.tag.capitalize())(top_frame, **opt_list)
     def __exit__(self):
         """
@@ -97,7 +114,6 @@ class Gui():
 
 def main():
     g = Gui()
-
 
 if __name__ == '__main__':
     main()
