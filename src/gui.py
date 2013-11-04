@@ -57,7 +57,7 @@ class Gui():
 
         self.log_frame = ttk.Frame(self.root)
         self.log_frame.grid()
-        self.log_text = tkinter.Text(self.log_frame, width=150, height=20, wrap=tkinter.CHAR, state=tkinter.DISABLED)
+        self.log_text = tkinter.Text(self.log_frame, width=150, height=20, wrap=tkinter.CHAR) #state=tkinter.DISABLED) 
         # self.log_text.insert(tkinter.INSERT, "DEBUG")
         self.log_text.grid()
 
