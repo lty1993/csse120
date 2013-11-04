@@ -44,7 +44,7 @@ class Gui():
 
         self.coordinates = tkinter.StringVar()
         self.config_widget("grid_entry", {"textvariable": self.coordinates})
-        self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.coordinates.get())})
+        self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.coordinates.get(), self.speed.get(), self.rotation.get())})
 
         self.darkness = tkinter.IntVar()
         self.config_widget("darkness_entry", {"textvariable": self.darkness})
@@ -69,8 +69,8 @@ class Gui():
 
         robotLogger.logger_list["GuiLogger"].gui = self
 
-        self.robot.team_info()
-        print("infoooooooooooo")
+        info_time = Timer(2, lambda: self.robot.team_info())
+        info_time.start()
         self.root.mainloop()
 
     def config_widget(self, widget_name, widget_options):
