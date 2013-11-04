@@ -14,4 +14,4 @@ DATE-STARTED, DATE-DUE/ENDED.  DESCRIBE-TASK.  STATUS.  HOURS.
 10-29         10-31            f2              DONE.    1
 10-30         11-1.            f7a-1           IN-PROGRESS  2
 11-1          11-1.            f7a-2           IN-PROGRESS  1
-10-31         11-1.            f1              IN-PROGRESS  1
+10-31         11-1.            f1              DONE.    1

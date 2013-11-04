@@ -56,7 +56,7 @@ class Robot(object):
         """
         self.job.terminated = True
         while self.job.is_alive(): pass
-        self.connection.stop()
+        if self.connection: self.connection.stop()
 
     def _log(self, message, method_name, level="DEBUG", logger=None):
         """
@@ -98,7 +98,7 @@ class Robot(object):
         Stops the robot.
         Contributor: Xiangqing Zhang.
         """
-        if self.connection: self._job_clear()
+        self._job_clear()
 
     def move_autonomously(self, speed, rotation, seconds):
         """
@@ -156,8 +156,6 @@ class Robot(object):
         #ls = our_create.Sensors.None
         #rs = our_create.Sensors.None
         pass
-    def log_information(self):
-        pass
     def team_info(self):
         """
         Displays team members' names and task-list reported hours that have been updated at each sprint.
@@ -170,14 +168,14 @@ class Robot(object):
         FO = open("tasks-1.r", "r")
         tasks1 = FO.read()
         FO.close()
-        self._log(tasks1, "_team_info")
         FO = open("tasks-2.r", "r")
         tasks2 = FO.read()
         FO.close()
-        self._log(tasks2, "_team_info")
         FO = open("tasks-3.r", "r")
         tasks3 = FO.read()
         FO.close()
+        self._log(tasks1, "_team_info")
+        self._log(tasks2, "_team_info")
         self._log(tasks3, "_team_info")
     def log_information(self):
         """

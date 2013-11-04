@@ -3,7 +3,7 @@ from Robot import Robot
 import tkinter
 from tkinter import ttk
 from logger import robotLogger
-from thread import timer
+from threading import Timer
 
 class Gui():
     def __init__(self):
@@ -28,8 +28,6 @@ class Gui():
 
         self.config_widget("btn_connect", {"command": lambda: self.robot.connect()})
         self.config_widget("btn_stop", {"command": lambda: self.robot.stop()})
-
-        self.config_widget("team_info", {"command": lambda: self.robot.team_info()})
 
         self.config_widget("wilma_bio", {"command": lambda: self.robot.log_information()})
 
@@ -59,9 +57,9 @@ class Gui():
         self.config_widget("btn_bytecode_entry", {"command": lambda: self.robot.chat_with_another_robot(self.bytecode.get())})
         
         self.config_widget("btn_forward", {"command": lambda: self.robot.teleport("Forward")})
-        self.config_widget("btn_backward", {"command": lambda: self.robot.teleport("Backward"))})
-        self.config_widget("btn_left", {"command": lambda: self.robot.teleport("Left"))})
-        self.config_widget("btn_right", {"command": lambda: self.robot.teleport("Right"))})
+        self.config_widget("btn_backward", {"command": lambda: self.robot.teleport("Backward")})
+        self.config_widget("btn_left", {"command": lambda: self.robot.teleport("Left")})
+        self.config_widget("btn_right", {"command": lambda: self.robot.teleport("Right")})
 
         self.log_frame = ttk.Frame(self.root)
         self.log_frame.grid()
@@ -70,6 +68,9 @@ class Gui():
         self.log_text.grid()
 
         robotLogger.logger_list["GuiLogger"].gui = self
+
+        self.robot.team_info()
+        print("infoooooooooooo")
         self.root.mainloop()
 
     def config_widget(self, widget_name, widget_options):
@@ -100,8 +101,14 @@ class Gui():
         if widget_xml.tag == "root":
             self.frame = ttk.Frame(self.root, padding=(20, 30), **widget_xml.attrib)
             for each_widget in widget_xml:
-                ttk_widget = self.add_widget(each_widget, self.frame)
-                ttk_widget.pack()
+                ttk_widget, row_column = self.add_widget(each_widget, self.frame)
+                if not row_column:
+                    ttk_widget.grid()
+                else:
+                    row_column = row_column.split(",")
+                    rows = int(row_column[0])
+                    columns = int(row_column[1])
+                    ttk_widget.grid(row=rows, column=columns)
             return self.frame
         else:
             opt_list = widget_xml.attrib
@@ -109,18 +116,23 @@ class Gui():
                 opt_list = opt_list.copy()
                 for each_widget in widget_xml:
                     opt_list[each_widget.tag] = each_widget.text
-                    # print(each_widget.tag, "," , each_widget.text)
-            return getattr(ttk, widget_xml.tag.capitalize())(top_frame, **opt_list)
-    def __exit__(self):
+            row_column = None
+            if "row_column" in opt_list:
+                row_column = opt_list["row_column"]
+                del opt_list["row_column"]
+            return [getattr(ttk, widget_xml.tag.capitalize())(top_frame, **opt_list), row_column]
+    def exit(self):
         """
         Disconnect the robot when interrupted or terminated.
 
         Contributor: Xiangqing Zhang
         """
+        self.robot.stop()
         self.robot.disconnect()
 
 def main():
     g = Gui()
+    g.exit()
 
 if __name__ == '__main__':
     main()
