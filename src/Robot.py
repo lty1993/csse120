@@ -183,6 +183,7 @@ class Robot(object):
         FO = open("WILMAbio.wilma", "r")
         wilma_bio = FO.read()
         FO.close()
+        print(wilma_bio)
     def grid_movement(self, coordinates):
         """
         Moves robot to user-specified coordinates on an imaginary grid.
