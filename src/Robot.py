@@ -204,40 +204,57 @@ class Robot(object):
     def _grid_movement(self, coordinate, location):
         x_initial = int(location[0])
         y_initial = int(location[1])
-        speed = 100
-        rotation_left = 90
-        rotation_right = -90
+        speed = 50
+        rotation_left = 45
+        rotation_right = -45
         x = int(coordinate[0])
         y = int(coordinate[1])
 
         if x > x_initial:
             self.connection.go(speed, 0)
-            time.sleep(x - x_initial)
+            time.sleep((x - x_initial))
         elif x < x_initial:
             self.connection.go(0, rotation_left)
-            time.sleep(2)
+            time.sleep(4)
             self.connection.go(speed, 0)
-            time.sleep(x_initial - x)
+            time.sleep((x_initial - x))
+            self.connection.go(0, 0)
+            time.sleep(1)
+            self.connection.go(0, rotation_right)
+            time.sleep(4)
+            self.connection.go(0, 0)
+            time.sleep(1)
         else:
             pass
 
         if y > y_initial:
             self.connection.go(0, rotation_left)
-            time.sleep(1)
+            time.sleep(2)
             self.connection.go(speed, 0)
             time.sleep(y - y_initial)
             self.connection.go(0, rotation_right)
             time.sleep(1)
+
         elif y < y_initial:
             self.connection.go(0, rotation_right)
+            time.sleep(2)
             self.connection.go(speed, 0)
             time.sleep(y_initial - y)
+
+        else:
+            pass
+
+        if y > y_initial:
+            self.connection.go(0, rotation_right)
+            time.sleep(2)
+        elif y < y_initial:
             self.connection.go(0, rotation_left)
-            time.sleep(1)
+            time.sleep(2)
         else:
             pass
 
         self.connection.stop()
+
 
     def __repr__(self):
         """
