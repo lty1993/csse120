@@ -153,8 +153,8 @@ class Robot(object):
     def follow_with_black_line(self):
         self._job(self._follow_with_black_line);
     def _follow_with_black_line(self):
-        #ls = our_create.Sensors.None
-        #rs = our_create.Sensors.None
+        # ls = our_create.Sensors.None
+        # rs = our_create.Sensors.None
         pass
     def log_information(self):
         pass
@@ -207,7 +207,7 @@ class Robot(object):
             coordinate = coordinates_list[k]
             self._job(self._grid_movement, [coordinate, location])
         robotLogger.add("%s%s" % (coordinates, location), "grid_movement")
-       
+
 
     def _grid_movement(self, coordinate, location):
         x_initial = int(location[0])
@@ -239,21 +239,17 @@ class Robot(object):
             self.connection.go(0, rotation_left)
             time.sleep(2)
             self.connection.go(speed, 0)
-<<<<<<< HEAD
             time.sleep(y - y_initial)
             self.connection.go(0, rotation_right)
-            time.sleep(1)
+            time.sleep(2)
 
-=======
             time.sleep((y - y_initial))
             self.connection.go(0, rotation_right)
             time.sleep(2)
->>>>>>> cd6d5e4048adccc49b7873349357bb370d21464f
         elif y < y_initial:
             self.connection.go(0, rotation_right)
             time.sleep(2)
             self.connection.go(speed, 0)
-<<<<<<< HEAD
             time.sleep(y_initial - y)
 
         else:
@@ -263,33 +259,25 @@ class Robot(object):
             self.connection.go(0, rotation_right)
             time.sleep(2)
         elif y < y_initial:
-=======
             time.sleep((y_initial - y))
->>>>>>> cd6d5e4048adccc49b7873349357bb370d21464f
             self.connection.go(0, rotation_left)
             time.sleep(2)
         else:
             pass
-<<<<<<< HEAD
 
-        self.connection.stop()
-
-=======
-        self.connection.stop()    
         self.stop()
-    
+
     def teleport(self, command):
         self._job(self._chat_with_another_robot, command);
     def _teleport(self, command):
         if(command == "Forward"):
-            self.move_autonomously(20,0,0)
+            self.move_autonomously(20, 0, 0)
         if(command == "Backward"):
-            self.move_autonomously(-20,0,0)
+            self.move_autonomously(-20, 0, 0)
         if(command == "Left"):
-            self.move_autonomously(0,-90,0)
+            self.move_autonomously(0, -90, 0)
         if(command == "Right"):
-            self.move_autonomously(0,90,0)
->>>>>>> cd6d5e4048adccc49b7873349357bb370d21464f
+            self.move_autonomously(0, 90, 0)
 
     def __repr__(self):
         """
