@@ -162,15 +162,15 @@ class Robot(object):
         FO = open("tasks-1.r", "r")
         tasks1 = FO.read()
         FO.close()
-        print(tasks1)
+        self._log(tasks1, "_team_info")
         FO = open("tasks-2.r", "r")
         tasks2 = FO.read()
         FO.close()
-        print(tasks2)
+        self._log(tasks2, "_team_info")
         FO = open("tasks-3.r", "r")
         tasks3 = FO.read()
         FO.close()
-        print(tasks3)
+        self._log(tasks3, "_team_info")
     def log_information(self):
         """
         Also displays a short fictitious bio on WILMA.
@@ -183,7 +183,7 @@ class Robot(object):
         FO = open("WILMAbio.wilma", "r")
         wilma_bio = FO.read()
         FO.close()
-        print(wilma_bio)
+        self._log(wilma_bio, "_log_information")
     def grid_movement(self, coordinates):
         """
         Moves robot to user-specified coordinates on an imaginary grid.
