@@ -3,6 +3,7 @@ from Robot import Robot
 import tkinter
 from tkinter import ttk
 from logger import robotLogger
+from thread import timer
 
 class Gui():
     def __init__(self):
@@ -16,7 +17,7 @@ class Gui():
         self.robot = Robot()
         self.robot.connect()
 
-        self.root = tkinter.Tk("Robot GUI")
+        self.root = tkinter.Tk()
         self.frame = None
         FO = open("mainwindow.xml", "r")
         xml_string = FO.read()
@@ -54,6 +55,11 @@ class Gui():
         self.config_widget("bytecode_entry", {"textvariable": self.bytecode})
 
         self.config_widget("btn_bytecode_entry", {"command": lambda: self.robot.chat_with_another_robot(self.bytecode.get())})
+        
+        self.config_widget("btn_forward", {"command": lambda: self.robot.teleport("Forward")})
+        self.config_widget("btn_backward", {"command": lambda: self.robot.teleport("Backward"))})
+        self.config_widget("btn_left", {"command": lambda: self.robot.teleport("Left"))})
+        self.config_widget("btn_right", {"command": lambda: self.robot.teleport("Right"))})
 
         self.log_frame = ttk.Frame(self.root)
         self.log_frame.grid()
@@ -63,6 +69,7 @@ class Gui():
 
         robotLogger.logger_list["GuiLogger"].gui = self
         print(self, robotLogger.logger_list["GuiLogger"].gui)
+
         self.root.mainloop()
 
     def config_widget(self, widget_name, widget_options):

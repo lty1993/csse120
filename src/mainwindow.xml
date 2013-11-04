@@ -29,4 +29,8 @@
     <label name="bytecode_entry_label" text="Enter a bytecode:"></label>
     <entry name="bytecode_entry" width='30' />
     <button name="btn_bytecode_entry" text="Sending Bytecode"></button>
+    <button name="btn_forward" text="Forward"></button>
+    <button name="btn_backward" text="Backward"></button>
+    <button name="btn_left" text="Left"></button>
+    <button name="btn_right" text="Right"></button>
 </root>
