@@ -16,7 +16,8 @@ class Gui():
         self.robot = Robot()
         self.robot.connect()
 
-        self.root = tkinter.Tk("Robot GUI")
+        self.root = tkinter.Tk()
+        self.root.title("Robot GUI")
         self.frame = None
         FO = open("mainwindow.xml", "r")
         xml_string = FO.read()
@@ -62,7 +63,6 @@ class Gui():
         self.log_text.grid()
 
         robotLogger.logger_list["GuiLogger"].gui = self
-        print(self, robotLogger.logger_list["GuiLogger"].gui)
         self.root.mainloop()
 
     def config_widget(self, widget_name, widget_options):
