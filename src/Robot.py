@@ -149,6 +149,11 @@ class Robot(object):
             while temp_bytecode==bytecode:
                 temp_bytecode = random.randint(0, 255)
             bytecode = temp_bytecode
+    def follow_with_black_line(self):
+        self._job(self._follow_with_black_line);
+    def _follow_with_black_line(self):
+        ls = our_create.Sensors.
+        rs = our_create.Sensors.
     def log_information(self):
         """
         Displays team members' names and task-list reported hours that have been updated at each sprint.
