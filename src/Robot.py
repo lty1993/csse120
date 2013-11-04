@@ -150,6 +150,14 @@ class Robot(object):
             while temp_bytecode == bytecode:
                 temp_bytecode = random.randint(0, 255)
             bytecode = temp_bytecode
+    def follow_with_black_line(self):
+        self._job(self._follow_with_black_line);
+    def _follow_with_black_line(self):
+        #ls = our_create.Sensors.None
+        #rs = our_create.Sensors.None
+        pass
+    def log_information(self):
+        pass
     def team_info(self):
         """
         Displays team members' names and task-list reported hours that have been updated at each sprint.
@@ -245,7 +253,18 @@ class Robot(object):
             pass
         self.connection.stop()    
         self.stop()
-
+    
+    def teleport(self, command):
+        self._job(self._chat_with_another_robot, command);
+    def _teleport(self, command):
+        if(command == "Forward"):
+            self.move_autonomously(20,0,0)
+        if(command == "Backward"):
+            self.move_autonomously(-20,0,0)
+        if(command == "Left"):
+            self.move_autonomously(0,-90,0)
+        if(command == "Right"):
+            self.move_autonomously(0,90,0)
 
     def __repr__(self):
         """

@@ -3,6 +3,10 @@
     <button name="btn_stop" text="Stop"></button>
     <button name="team_info" text="Team Info"></button>
     <button name="wilma_bio" text="WILMA's Bio"></button>
+    <button name="btn_forward" text="Forward"></button>
+    <button name="btn_backward" text="Backward"></button>
+    <button name="btn_left" text="Left"></button>
+    <button name="btn_right" text="Right"></button>
     <label name="speed_entry_label">
         <text>Enter a speed: </text>
     </label>
