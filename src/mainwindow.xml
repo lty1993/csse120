@@ -3,6 +3,10 @@
     <button name="btn_stop" text="Stop"></button>
     <button name="team_info" text="Team Info"></button>
     <button name="wilma_bio" text="WILMA's Bio"></button>
+    <button name="btn_forward" text="Forward"></button>
+    <button name="btn_backward" text="Backward"></button>
+    <button name="btn_left" text="Left"></button>
+    <button name="btn_right" text="Right"></button>
     <label name="speed_entry_label">
         <text>Enter a speed: </text>
     </label>
@@ -28,5 +32,5 @@
     <button name="grid_button" text="Move to this coordinate"></button>
     <label name="bytecode_entry_label" text="Enter a bytecode:"></label>
     <entry name="bytecode_entry" width='30' />
-    <button name="btn_bytecode_entry" text="Sending Bytecode"></button>
+    <button name="btn_bytecode_entry" text="Receiving Bytecode"></button>
 </root>

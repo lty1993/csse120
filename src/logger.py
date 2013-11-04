@@ -122,10 +122,10 @@ class GuiLogger(LoggerType):
         super().__init__()
         self.gui = None
     def log(self, message, method_name, level="DEBUG"):
-        print(self.gui)
+        # print(self.gui)
         if self.gui:
             if not level in self.ignore_level_list:
-                self.gui.log_text.insert(INSERT, datetime.datetime.now().strftime("%H:%M:%S") + " [%s] <%s> %s\r\n"%(method_name, level, message))
+                self.gui.log_text.insert(INSERT, datetime.datetime.now().strftime("%H:%M:%S") + " [%s] <%s> %s\n"%(method_name, level, message))
 
 # Please ONLY use the robotLogger!
 robotLogger = Logger()

@@ -150,6 +150,14 @@ class Robot(object):
             while temp_bytecode == bytecode:
                 temp_bytecode = random.randint(0, 255)
             bytecode = temp_bytecode
+    def follow_with_black_line(self):
+        self._job(self._follow_with_black_line);
+    def _follow_with_black_line(self):
+        #ls = our_create.Sensors.None
+        #rs = our_create.Sensors.None
+        pass
+    def log_information(self):
+        pass
     def team_info(self):
         """
         Displays team members' names and task-list reported hours that have been updated at each sprint.
@@ -162,15 +170,15 @@ class Robot(object):
         FO = open("tasks-1.r", "r")
         tasks1 = FO.read()
         FO.close()
-        print(tasks1)
+        self._log(tasks1, "_team_info")
         FO = open("tasks-2.r", "r")
         tasks2 = FO.read()
         FO.close()
-        print(tasks2)
+        self._log(tasks2, "_team_info")
         FO = open("tasks-3.r", "r")
         tasks3 = FO.read()
         FO.close()
-        print(tasks3)
+        self._log(tasks3, "_team_info")
     def log_information(self):
         """
         Also displays a short fictitious bio on WILMA.
@@ -183,7 +191,7 @@ class Robot(object):
         FO = open("WILMAbio.wilma", "r")
         wilma_bio = FO.read()
         FO.close()
-        print(wilma_bio)
+        self._log(wilma_bio, "_log_information")
     def grid_movement(self, coordinates):
         """
         Moves robot to user-specified coordinates on an imaginary grid.
@@ -199,7 +207,7 @@ class Robot(object):
             coordinate = coordinates_list[k]
             self._job(self._grid_movement, [coordinate, location])
         robotLogger.add("%s%s" % (coordinates, location), "grid_movement")
-        self.stop()
+       
 
     def _grid_movement(self, coordinate, location):
         x_initial = int(location[0])
@@ -231,14 +239,21 @@ class Robot(object):
             self.connection.go(0, rotation_left)
             time.sleep(2)
             self.connection.go(speed, 0)
+<<<<<<< HEAD
             time.sleep(y - y_initial)
             self.connection.go(0, rotation_right)
             time.sleep(1)
 
+=======
+            time.sleep((y - y_initial))
+            self.connection.go(0, rotation_right)
+            time.sleep(2)
+>>>>>>> cd6d5e4048adccc49b7873349357bb370d21464f
         elif y < y_initial:
             self.connection.go(0, rotation_right)
             time.sleep(2)
             self.connection.go(speed, 0)
+<<<<<<< HEAD
             time.sleep(y_initial - y)
 
         else:
@@ -248,13 +263,33 @@ class Robot(object):
             self.connection.go(0, rotation_right)
             time.sleep(2)
         elif y < y_initial:
+=======
+            time.sleep((y_initial - y))
+>>>>>>> cd6d5e4048adccc49b7873349357bb370d21464f
             self.connection.go(0, rotation_left)
             time.sleep(2)
         else:
             pass
+<<<<<<< HEAD
 
         self.connection.stop()
 
+=======
+        self.connection.stop()    
+        self.stop()
+    
+    def teleport(self, command):
+        self._job(self._chat_with_another_robot, command);
+    def _teleport(self, command):
+        if(command == "Forward"):
+            self.move_autonomously(20,0,0)
+        if(command == "Backward"):
+            self.move_autonomously(-20,0,0)
+        if(command == "Left"):
+            self.move_autonomously(0,-90,0)
+        if(command == "Right"):
+            self.move_autonomously(0,90,0)
+>>>>>>> cd6d5e4048adccc49b7873349357bb370d21464f
 
     def __repr__(self):
         """
