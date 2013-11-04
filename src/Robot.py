@@ -199,6 +199,7 @@ class Robot(object):
             coordinate = coordinates_list[k]
             self._job(self._grid_movement, [coordinate, location])
         robotLogger.add("%s%s" % (coordinates, location), "grid_movement")
+        self.stop()
 
     def _grid_movement(self, coordinate, location):
         x_initial = int(location[0])
@@ -225,21 +226,17 @@ class Robot(object):
             time.sleep(1)
             self.connection.go(speed, 0)
             time.sleep(y - y_initial)
+            self.connection.go(0, rotation_right)
+            time.sleep(1)
         elif y < y_initial:
             self.connection.go(0, rotation_right)
             self.connection.go(speed, 0)
             time.sleep(y_initial - y)
-        else:
-            pass
-
-        if y > y_initial:
-            self.connection.go(0, rotation_right)
-            time.sleep(1)
-        elif y < y_initial:
             self.connection.go(0, rotation_left)
             time.sleep(1)
         else:
             pass
+
         self.connection.stop()
 
     def __repr__(self):
