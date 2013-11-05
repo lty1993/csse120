@@ -56,7 +56,8 @@ class Robot(object):
         """
         self.job.terminated = True
         while self.job.is_alive(): pass
-        self.connection.stop()
+        self.job = None
+        if self.connection: self.connection.stop()
 
     def _log(self, message, method_name, level="DEBUG", logger=None):
         """
@@ -98,7 +99,7 @@ class Robot(object):
         Stops the robot.
         Contributor: Xiangqing Zhang.
         """
-        if self.connection: self._job_clear()
+        self.job.terminated = True
 
     def move_autonomously(self, speed, rotation, seconds):
         """
@@ -156,8 +157,6 @@ class Robot(object):
         # ls = our_create.Sensors.None
         # rs = our_create.Sensors.None
         pass
-    def log_information(self):
-        pass
     def team_info(self):
         """
         Displays team members' names and task-list reported hours that have been updated at each sprint.
@@ -170,14 +169,14 @@ class Robot(object):
         FO = open("tasks-1.r", "r")
         tasks1 = FO.read()
         FO.close()
-        self._log(tasks1, "_team_info")
         FO = open("tasks-2.r", "r")
         tasks2 = FO.read()
         FO.close()
-        self._log(tasks2, "_team_info")
         FO = open("tasks-3.r", "r")
         tasks3 = FO.read()
         FO.close()
+        self._log(tasks1, "_team_info")
+        self._log(tasks2, "_team_info")
         self._log(tasks3, "_team_info")
     def log_information(self):
         """
@@ -192,80 +191,74 @@ class Robot(object):
         wilma_bio = FO.read()
         FO.close()
         self._log(wilma_bio, "_log_information")
-    def grid_movement(self, coordinates):
+
+    def grid_movement(self, coordinates, speed, rotation):
         """
         Moves robot to user-specified coordinates on an imaginary grid.
         Feature 7a-1
         Contributor: Matthew O'Brien
         """
-        coor_list = []
-        coordinates_list = coordinates.split()
-        coordinates_list.insert(0, '00')
+        self._job(self._grid_movement, [coordinates, speed, rotation])
+    def _grid_movement(self, coordinates, speed, rotation):
+        coordinates_temp = coordinates.split()
+        coordinates = [[0, 0]]
+        for each_coordinate in coordinates_temp:
+            coordinates.append(each_coordinate.split(","))
 
-        for k in range(1, len(coordinates_list)):
-            location = coordinates_list[k - 1]
-            coordinate = coordinates_list[k]
-            self._job(self._grid_movement, [coordinate, location])
-        robotLogger.add("%s%s" % (coordinates, location), "grid_movement")
+        for k in range(1, len(coordinates)):
+            location = coordinates[k - 1]
+            coordinate = coordinates[k]
+            x_initial = int(location[0])
+            y_initial = int(location[1])
+            rotation_left = 45
+            rotation_right = -45
+            x = int(coordinate[0])
+            y = int(coordinate[1])
+            robotLogger.add("%d,%d==>%d,%d"%(x_initial, y_initial, x, y), "_grid_movement")
 
+            if x > x_initial:
+                self.connection.go(speed, 0)
+                time.sleep(x - x_initial)
+                self.connection.go(0, 0)
+            elif x < x_initial:
+                self.connection.go(0, rotation_left)
+                time.sleep(4)
+                self.connection.go(speed, 0)
+                time.sleep(x_initial - x)
+                self.connection.go(0, 0)
+                time.sleep(1)
+                self.connection.go(0, rotation_right)
+                time.sleep(4)
+                self.connection.go(0, 0)
+                time.sleep(1)
+                self.connection.go(0, 0)
+            else:
+                pass
 
-    def _grid_movement(self, coordinate, location):
-        x_initial = int(location[0])
-        y_initial = int(location[1])
-        speed = 50
-        rotation_left = 45
-        rotation_right = -45
-        x = int(coordinate[0])
-        y = int(coordinate[1])
-
-        if x > x_initial:
-            self.connection.go(speed, 0)
-            time.sleep((x - x_initial))
-        elif x < x_initial:
-            self.connection.go(0, rotation_left)
-            time.sleep(4)
-            self.connection.go(speed, 0)
-            time.sleep((x_initial - x))
-            self.connection.go(0, 0)
-            time.sleep(1)
-            self.connection.go(0, rotation_right)
-            time.sleep(4)
-            self.connection.go(0, 0)
-            time.sleep(1)
-        else:
-            pass
-
-        if y > y_initial:
-            self.connection.go(0, rotation_left)
-            time.sleep(2)
-            self.connection.go(speed, 0)
-            time.sleep(y - y_initial)
-            self.connection.go(0, rotation_right)
-            time.sleep(2)
-
-            time.sleep((y - y_initial))
-            self.connection.go(0, rotation_right)
-            time.sleep(2)
-        elif y < y_initial:
-            self.connection.go(0, rotation_right)
-            time.sleep(2)
-            self.connection.go(speed, 0)
-            time.sleep(y_initial - y)
-
-        else:
-            pass
-
-        if y > y_initial:
-            self.connection.go(0, rotation_right)
-            time.sleep(2)
-        elif y < y_initial:
-            time.sleep((y_initial - y))
-            self.connection.go(0, rotation_left)
-            time.sleep(2)
-        else:
-            pass
-
+            if y > y_initial:
+                self.connection.go(0, rotation_left)
+                time.sleep(2)
+                self.connection.go(speed, 0)
+                time.sleep(y - y_initial)
+                self.connection.go(0, 0)
+                time.sleep(1)
+                self.connection.go(0, rotation_right)
+                time.sleep(2)
+                self.connection.go(0, 0)
+            elif y < y_initial:
+                self.connection.go(0, rotation_right)
+                time.sleep(2)
+                self.connection.go(speed, 0)
+                time.sleep(y_initial - y)
+                self.connection.go(0, 0)
+                time.sleep(1)
+                self.connection.go(0, rotation_left)
+                time.sleep(2)
+                self.connection.go(0, 0)
+            else:
+                pass
         self.stop()
+        robotLogger.add("Finished moving.", "_grid_movement", "SUCCESS")
 
     def teleport(self, command):
         self._job(self._chat_with_another_robot, command);
