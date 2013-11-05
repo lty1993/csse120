@@ -4,6 +4,7 @@ from logger import robotLogger
 from job import Job
 import random
 import time
+import math
 
 class Robot(object):
     """
@@ -214,49 +215,77 @@ class Robot(object):
             rotation_right = -45
             x = int(coordinate[0])
             y = int(coordinate[1])
-            robotLogger.add("%d,%d==>%d,%d"%(x_initial, y_initial, x, y), "_grid_movement")
+            robotLogger.add("%d,%d==>%d,%d" % (x_initial, y_initial, x, y), "_grid_movement")
 
-            if x > x_initial:
-                self.connection.go(speed, 0)
-                time.sleep(x - x_initial)
-                self.connection.go(0, 0)
-            elif x < x_initial:
-                self.connection.go(0, rotation_left)
-                time.sleep(4)
-                self.connection.go(speed, 0)
-                time.sleep(x_initial - x)
-                self.connection.go(0, 0)
-                time.sleep(1)
-                self.connection.go(0, rotation_right)
-                time.sleep(4)
-                self.connection.go(0, 0)
-                time.sleep(1)
-                self.connection.go(0, 0)
+            y_distance = y - y_initial
+            x_distance = x - x_initial
+            r = math.sqrt(x_distance ** 2 + y_distance ** 2)
+            if x_distance == 0 and y_distance > 0:  # positive y-axis
+                degrees = 90
+            elif x_distance == 0 and y_distance < 0:  # negative y-axis
+                degrees = -90
+            elif y_distance == 0 and x_distance < 0:  # negative x-axis
+                degrees = 180
+            else:
+                radians = math.atan(y_distance / x_distance)
+                degrees = radians * (180 / math.pi)
+
+            if x_distance < 0 and y_distance > 0:  # 2nd quadrant
+                degrees = 90 - degrees
+            elif x_distance < 0 and y_distance < 0:  # 3rd quadrant
+                degrees = 180 + degrees
             else:
                 pass
 
-            if y > y_initial:
-                self.connection.go(0, rotation_left)
-                time.sleep(2)
-                self.connection.go(speed, 0)
-                time.sleep(y - y_initial)
-                self.connection.go(0, 0)
-                time.sleep(1)
-                self.connection.go(0, rotation_right)
-                time.sleep(2)
-                self.connection.go(0, 0)
-            elif y < y_initial:
-                self.connection.go(0, rotation_right)
-                time.sleep(2)
-                self.connection.go(speed, 0)
-                time.sleep(y_initial - y)
-                self.connection.go(0, 0)
-                time.sleep(1)
-                self.connection.go(0, rotation_left)
-                time.sleep(2)
-                self.connection.go(0, 0)
-            else:
-                pass
+            self.connection.go(0, degrees)
+            time.sleep(1)
+            self.connection.go(speed, 0)
+            time.sleep(r)
+            self.connection.go(0, -degrees)
+            time.sleep(1)
+            self.connection.stop()
+
+#             if x > x_initial:
+#                 self.connection.go(speed, 0)
+#                 time.sleep(x - x_initial)
+#                 self.connection.go(0, 0)
+#             elif x < x_initial:
+#                 self.connection.go(0, rotation_left)
+#                 time.sleep(4)
+#                 self.connection.go(speed, 0)
+#                 time.sleep(x_initial - x)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#                 self.connection.go(0, rotation_right)
+#                 time.sleep(4)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#                 self.connection.go(0, 0)
+#             else:
+#                 pass
+#
+#             if y > y_initial:
+#                 self.connection.go(0, rotation_left)
+#                 time.sleep(2)
+#                 self.connection.go(speed, 0)
+#                 time.sleep(y - y_initial)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#                 self.connection.go(0, rotation_right)
+#                 time.sleep(2)
+#                 self.connection.go(0, 0)
+#             elif y < y_initial:
+#                 self.connection.go(0, rotation_right)
+#                 time.sleep(2)
+#                 self.connection.go(speed, 0)
+#                 time.sleep(y_initial - y)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#                 self.connection.go(0, rotation_left)
+#                 time.sleep(2)
+#                 self.connection.go(0, 0)
+#             else:
+#                 pass
         self.stop()
         robotLogger.add("Finished moving.", "_grid_movement", "SUCCESS")
 
