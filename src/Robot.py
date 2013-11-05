@@ -54,9 +54,10 @@ class Robot(object):
         Clears all jobs.
         Contributor: Xiangqing Zhang
         """
-        self.job.terminated = True
-        while self.job.is_alive(): pass
-        self.job = None
+        if self.job:
+            self.job.terminated = True
+            while self.job.is_alive(): pass
+            self.job = None
         if self.connection: self.connection.stop()
 
     def _log(self, message, method_name, level="DEBUG", logger=None):
@@ -99,8 +100,26 @@ class Robot(object):
         Stops the robot.
         Contributor: Xiangqing Zhang.
         """
-        self.job.terminated = True
+        if self.job:
+            self.job.terminated = True
 
+    def teleport(self, command, speed, seconds):
+        """
+        User can move WILMA forward and backward, spin WILMA left and right.
+        User can change speed during teleoperation.
+        Feature: 3a
+        Contributor: Tianyu Liu
+        """
+        self._job(self._teleport, [command, speed, 90 / seconds], life_span=seconds);
+    def _teleport(self, command, speed, rotation):
+        if(command == "Forward"):
+            self._move_autonomously(speed, 0)
+        if(command == "Backward"):
+            self._move_autonomously(-speed, 0)
+        if(command == "Left"):
+            self._move_autonomously(0, -rotation)
+        if(command == "Right"):
+            self._move_autonomously(0, rotation)
     def move_autonomously(self, speed, rotation, seconds):
         """
         Move autonomously at user-specified directional and rotational speed
@@ -259,18 +278,6 @@ class Robot(object):
                 pass
         self.stop()
         robotLogger.add("Finished moving.", "_grid_movement", "SUCCESS")
-
-    def teleport(self, command):
-        self._job(self._chat_with_another_robot, command);
-    def _teleport(self, command):
-        if(command == "Forward"):
-            self.move_autonomously(20, 0, 0)
-        if(command == "Backward"):
-            self.move_autonomously(-20, 0, 0)
-        if(command == "Left"):
-            self.move_autonomously(0, -90, 0)
-        if(command == "Right"):
-            self.move_autonomously(0, 90, 0)
 
     def __repr__(self):
         """

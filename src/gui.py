@@ -27,7 +27,7 @@ class Gui():
         self.add_widget(XML(xml_string), self.root).grid()
 
         self.config_widget("btn_connect", {"command": lambda: self.robot.connect()})
-        self.config_widget("btn_stop", {"command": lambda: self.robot.stop()})
+        self.config_widget("btn_stop", {"command": lambda: self.robot.connection.stop()})
 
         self.config_widget("wilma_bio", {"command": lambda: self.robot.log_information()})
 
@@ -56,10 +56,10 @@ class Gui():
 
         self.config_widget("btn_bytecode_entry", {"command": lambda: self.robot.chat_with_another_robot(self.bytecode.get())})
         
-        self.config_widget("btn_forward", {"command": lambda: self.robot.teleport("Forward")})
-        self.config_widget("btn_backward", {"command": lambda: self.robot.teleport("Backward")})
-        self.config_widget("btn_left", {"command": lambda: self.robot.teleport("Left")})
-        self.config_widget("btn_right", {"command": lambda: self.robot.teleport("Right")})
+        self.config_widget("btn_forward", {"command": lambda: self.robot.teleport("Forward", self.speed.get(), self.time.get())})
+        self.config_widget("btn_backward", {"command": lambda: self.robot.teleport("Backward", self.speed.get(), self.time.get())})
+        self.config_widget("btn_left", {"command": lambda: self.robot.teleport("Left", self.speed.get(), self.time.get())})
+        self.config_widget("btn_right", {"command": lambda: self.robot.teleport("Right", self.speed.get(), self.time.get())})
 
         self.log_frame = ttk.Frame(self.root)
         self.log_frame.grid()
