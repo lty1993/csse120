@@ -4,6 +4,7 @@ from logger import robotLogger
 from job import Job
 import random
 import time
+import math
 
 class Robot(object):
     """
@@ -160,7 +161,7 @@ class Robot(object):
             self.connection.sendIR(bytecode)
             while self._sendIR:
                 sensor_values = self.connection.getSensor(sensor)
-                robotLogger.add("bytecode: %d"%sensor_values, "_chat_with_another_robot")
+                robotLogger.add("bytecode: %d" % sensor_values, "_chat_with_another_robot")
                 if sensor_values != 255:
                     break
             temp_bytecode = random.randint(0, 255)
@@ -217,10 +218,20 @@ class Robot(object):
         """
         self._job(self._grid_movement, [coordinates, speed, rotation])
     def _grid_movement(self, coordinates, speed, rotation):
-        coordinates_temp = coordinates.split()
-        coordinates = [[0, 0]]
-        for each_coordinate in coordinates_temp:
-            coordinates.append(each_coordinate.split(","))
+
+        if coordinates == 'coordinates.txt':
+            FO = open("coordinates.txt", "r")
+            coordinates_from_file = FO.read()
+            FO.close()
+            coordinates_temp = coordinates_from_file.split()
+            coordinates = [[0, 0]]
+            for each_coordinate in coordinates_temp:
+                coordinates.append(each_coordinate.split(","))
+        else:
+            coordinates_temp = coordinates.split()
+            coordinates = [[0, 0]]
+            for each_coordinate in coordinates_temp:
+                coordinates.append(each_coordinate.split(","))
 
         for k in range(1, len(coordinates)):
             location = coordinates[k - 1]
@@ -231,24 +242,23 @@ class Robot(object):
             rotation_right = -45
             x = int(coordinate[0])
             y = int(coordinate[1])
-            robotLogger.add("%d,%d==>%d,%d"%(x_initial, y_initial, x, y), "_grid_movement")
+            robotLogger.add("%d,%d==>%d,%d" % (x_initial, y_initial, x, y), "_grid_movement")
 
-            if x > x_initial:
-                self.connection.go(speed, 0)
-                time.sleep(x - x_initial)
-                self.connection.go(0, 0)
-            elif x < x_initial:
-                self.connection.go(0, rotation_left)
-                time.sleep(4)
-                self.connection.go(speed, 0)
-                time.sleep(x_initial - x)
-                self.connection.go(0, 0)
-                time.sleep(1)
-                self.connection.go(0, rotation_right)
-                time.sleep(4)
-                self.connection.go(0, 0)
-                time.sleep(1)
-                self.connection.go(0, 0)
+            y_distance = y - y_initial
+            x_distance = x - x_initial
+            r = math.sqrt(x_distance ** 2 + y_distance ** 2)
+            if speed == 0:  # give an initial speed if none is provided
+                speed = 20
+            elif speed > 50:  # limit speed to 50 for accuracy
+                speed = 50
+            unit_time = (100 / speed) * r
+
+            if x_distance == 0 and y_distance > 0:  # positive y-axis
+                degrees = 90
+            elif x_distance == 0 and y_distance < 0:  # negative y-axis
+                degrees = -90
+            elif y_distance == 0 and x_distance < 0:  # negative x-axis
+                degrees = 180
             else:
                 pass
             if y > y_initial:
@@ -261,61 +271,125 @@ class Robot(object):
                 self.connection.go(0, rotation_right)
                 time.sleep(2)
                 self.connection.go(0, 0)
+                time.sleep(1)
             elif y < y_initial:
                 self.connection.go(0, rotation_right)
                 time.sleep(2)
                 self.connection.go(speed, 0)
                 time.sleep(y_initial - y)
-                self.connection.go(0, 0)      
+                self.connection.go(0, 0)
                 time.sleep(1)
                 self.connection.go(0, rotation_left)
                 time.sleep(2)
                 self.connection.go(0, 0)
+                time.sleep(1)
+
+                radians = math.atan(y_distance / x_distance)
+                degrees = radians * (180 / math.pi)
+
+            if x_distance < 0 and y_distance > 0:  # 2nd quadrant
+                degrees = 90 - degrees
+            elif x_distance < 0 and y_distance < 0:  # 3rd quadrant
+                degrees = 180 + degrees
             else:
                 pass
+
+            self.connection.go(0, degrees / 4)
+            time.sleep(4)
+            self.connection.go(speed, 0)
+            time.sleep(unit_time)
+            self.connection.go(0, -degrees / 4)
+            time.sleep(4)
+            self.connection.stop()
+
+#             if x > x_initial:
+#                 self.connection.go(speed, 0)
+#                 time.sleep(x - x_initial)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#             elif x < x_initial:
+#                 self.connection.go(0, rotation_left)
+#                 time.sleep(4)
+#                 self.connection.go(speed, 0)
+#                 time.sleep(x_initial - x)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#                 self.connection.go(0, rotation_right)
+#                 time.sleep(4)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#             else:
+#                 pass
+#
+#             if y > y_initial:
+#                 self.connection.go(0, rotation_left)
+#                 time.sleep(2)
+#                 self.connection.go(speed, 0)
+#                 time.sleep(y - y_initial)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#                 self.connection.go(0, rotation_right)
+#                 time.sleep(2)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#             elif y < y_initial:
+#                 self.connection.go(0, rotation_right)
+#                 time.sleep(2)
+#                 self.connection.go(speed, 0)
+#                 time.sleep(y_initial - y)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#                 self.connection.go(0, rotation_left)
+#                 time.sleep(2)
+#                 self.connection.go(0, 0)
+#                 time.sleep(1)
+#             else:
+#                 pass
         self.stop()
         robotLogger.add("Finished moving.", "_grid_movement", "SUCCESS")
-            
-    
+
+
     def teleport(self, commands):
         self._job(self._teleport, [commands]);
-        
+
     def _teleport(self, command):
         if(command == "Forward"):
-            if(self._teleportspeed[0]>0):
-                self._move_autonomously(self._teleportspeed[0]+10,0)
-                self._teleportspeed[0]+=10
+            if(self._teleportspeed[0] > 0):
+                self._move_autonomously(self._teleportspeed[0] + 10, 0)
+                self._teleportspeed[0] += 10
             else:
-                self._move_autonomously(10,0)
+                self._move_autonomously(10, 0)
                 self._teleportspeed[0] = 10
                 self._teleportspeed[1] = 0
         if(command == "Backward"):
-            if(self._teleportspeed[0]<0):
-                self._move_autonomously(self._teleportspeed[0]-10,0)
-                self._teleportspeed[0]-=10
+            if(self._teleportspeed[0] < 0):
+                self._move_autonomously(self._teleportspeed[0] - 10, 0)
+                self._teleportspeed[0] -= 10
             else:
-                self._move_autonomously(-10,0)
+                self._move_autonomously(-10, 0)
                 self._teleportspeed[0] = -10
                 self._teleportspeed[1] = 0
         if(command == "Right"):
-            if(self._teleportspeed[1]<0):
-                self._move_autonomously(0,self._teleportspeed[1]-30)
+            if(self._teleportspeed[1] < 0):
+                self._move_autonomously(0, self._teleportspeed[1] - 30)
                 self._teleportspeed[1] += -30
             else:
-                self._move_autonomously(0,-30)
+                self._move_autonomously(0, -30)
                 self._teleportspeed[1] = -30
                 self._teleportspeed[0] = 0
         if(command == "Left"):
-            if(self._teleportspeed[1]>0):
-                self._move_autonomously(0,self._teleportspeed[1]+30)
+            if(self._teleportspeed[1] > 0):
+                self._move_autonomously(0, self._teleportspeed[1] + 30)
                 self._teleportspeed[1] += 30
             else:
-                self._move_autonomously(0,30)
+                self._move_autonomously(0, 30)
                 self._teleportspeed[1] = 30
                 self._teleportspeed[0] = 0
     def follow_black_line(self, speed, darkness):
         self._job(self._follow_black_line, [speed, darkness]);
-    
+
     def _follow_black_line(self, speed, darkness):
         self._follow_line = True
         sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal];
