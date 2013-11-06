@@ -112,8 +112,8 @@ class Robot(object):
         Feature: 3a
         Contributor: Tianyu Liu
         """
-        self._job(self._teleport, [command, speed, 90 / seconds], life_span=seconds);
-    def _teleport(self, command, speed, rotation):
+        self._job(self._teleport, [command]);
+    def _teleport(self, command):
         if(command == "Forward"):
             self._move_autonomously(speed, 0)
         if(command == "Backward"):
