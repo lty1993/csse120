@@ -264,8 +264,8 @@ class Robot(object):
         robotLogger.add("Finished moving.", "_grid_movement", "SUCCESS")
             
     
-    def teleport(self, command):
-        self._job(self._teleport, command);
+    def teleport(self, commands):
+        self._job(self._teleport, commands);
         
     def _teleport(self, command):
         if(command == "Forward"):
