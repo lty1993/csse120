@@ -255,29 +255,31 @@ class Robot(object):
                 self.connection.go(0, 0)
             else:
                 pass
-
-<<<<<<< HEAD
-        if y > y_initial:
-            self.connection.go(0, rotation_left)
-            time.sleep(1)
-            self.connection.go(speed, 0)
-            time.sleep(y - y_initial)
-        elif y < y_initial:
-            self.connection.go(0, rotation_right)
-            self.connection.go(speed, 0)
-            time.sleep(y_initial - y)
-        else:
-            pass
-
-        if y > y_initial:
-            self.connection.go(0, rotation_right)
-            time.sleep(1)
-        elif y < y_initial:
-            self.connection.go(0, rotation_left)
-            time.sleep(1)
-        else:
-            pass
-        self.connection.stop()
+            if y > y_initial:
+                self.connection.go(0, rotation_left)
+                time.sleep(2)
+                self.connection.go(speed, 0)
+                time.sleep(y - y_initial)
+                self.connection.go(0, 0)
+                time.sleep(1)
+                self.connection.go(0, rotation_right)
+                time.sleep(2)
+                self.connection.go(0, 0)
+            elif y < y_initial:
+                self.connection.go(0, rotation_right)
+                time.sleep(2)
+                self.connection.go(speed, 0)
+                time.sleep(y_initial - y)
+                self.connection.go(0, 0)
+                time.sleep(1)
+                self.connection.go(0, rotation_left)
+                time.sleep(2)
+                self.connection.go(0, 0)
+            else:
+                pass
+        self.stop()
+        robotLogger.add("Finished moving.", "_grid_movement", "SUCCESS")
+            
     
     def teleport(self, command):
         self._job(self._chat_with_another_robot, command);
@@ -307,32 +309,6 @@ class Robot(object):
             else:
                 self.move_autonomously(0,30,0)
                 self._teleportspeed[1] = 30
-=======
-            if y > y_initial:
-                self.connection.go(0, rotation_left)
-                time.sleep(2)
-                self.connection.go(speed, 0)
-                time.sleep(y - y_initial)
-                self.connection.go(0, 0)
-                time.sleep(1)
-                self.connection.go(0, rotation_right)
-                time.sleep(2)
-                self.connection.go(0, 0)
-            elif y < y_initial:
-                self.connection.go(0, rotation_right)
-                time.sleep(2)
-                self.connection.go(speed, 0)
-                time.sleep(y_initial - y)
-                self.connection.go(0, 0)
-                time.sleep(1)
-                self.connection.go(0, rotation_left)
-                time.sleep(2)
-                self.connection.go(0, 0)
-            else:
-                pass
-        self.stop()
-        robotLogger.add("Finished moving.", "_grid_movement", "SUCCESS")
->>>>>>> origin/master
 
     def __repr__(self):
         """
