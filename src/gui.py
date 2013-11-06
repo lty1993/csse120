@@ -3,10 +3,7 @@ from Robot import Robot
 import tkinter
 from tkinter import ttk
 from logger import robotLogger
-<<<<<<< HEAD
-=======
-from threading import Timer
->>>>>>> origin/master
+
 
 class Gui():
     def __init__(self):
