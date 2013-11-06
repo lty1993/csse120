@@ -55,10 +55,12 @@ class Robot(object):
         Clears all jobs.
         Contributor: Xiangqing Zhang
         """
-        self.job.terminated = True
-        while self.job.is_alive(): pass
+        if self.job:
+            self.job.terminated = True
+            while self.job.is_alive(): pass
+            self.job = None
+        if self.connection: self.connection.stop()
         self._teleportspeed=[0,0]
-        self.connection.stop()
 
     def _log(self, message, method_name, level="DEBUG", logger=None):
         """
@@ -100,8 +102,26 @@ class Robot(object):
         Stops the robot.
         Contributor: Xiangqing Zhang.
         """
-        if self.connection: self._job_clear()
+        if self.job:
+            self.job.terminated = True
 
+    def teleport(self, command, speed, seconds):
+        """
+        User can move WILMA forward and backward, spin WILMA left and right.
+        User can change speed during teleoperation.
+        Feature: 3a
+        Contributor: Tianyu Liu
+        """
+        self._job(self._teleport, [command, speed, 90 / seconds], life_span=seconds);
+    def _teleport(self, command, speed, rotation):
+        if(command == "Forward"):
+            self._move_autonomously(speed, 0)
+        if(command == "Backward"):
+            self._move_autonomously(-speed, 0)
+        if(command == "Left"):
+            self._move_autonomously(0, -rotation)
+        if(command == "Right"):
+            self._move_autonomously(0, rotation)
     def move_autonomously(self, speed, rotation, seconds):
         """
         Move autonomously at user-specified directional and rotational speed
@@ -155,10 +175,8 @@ class Robot(object):
     def follow_with_black_line(self):
         self._job(self._follow_with_black_line);
     def _follow_with_black_line(self):
-        #ls = our_create.Sensors.None
-        #rs = our_create.Sensors.None
-        pass
-    def log_information(self):
+        # ls = our_create.Sensors.None
+        # rs = our_create.Sensors.None
         pass
     def team_info(self):
         """
@@ -172,15 +190,15 @@ class Robot(object):
         FO = open("tasks-1.r", "r")
         tasks1 = FO.read()
         FO.close()
-        print(tasks1)
         FO = open("tasks-2.r", "r")
         tasks2 = FO.read()
         FO.close()
-        print(tasks2)
         FO = open("tasks-3.r", "r")
         tasks3 = FO.read()
         FO.close()
-        print(tasks3)
+        self._log(tasks1, "_team_info")
+        self._log(tasks2, "_team_info")
+        self._log(tasks3, "_team_info")
     def log_information(self):
         """
         Also displays a short fictitious bio on WILMA.
@@ -193,42 +211,52 @@ class Robot(object):
         FO = open("WILMAbio.wilma", "r")
         wilma_bio = FO.read()
         FO.close()
-    def grid_movement(self, coordinates):
+        self._log(wilma_bio, "_log_information")
+
+    def grid_movement(self, coordinates, speed, rotation):
         """
         Moves robot to user-specified coordinates on an imaginary grid.
         Feature 7a-1
         Contributor: Matthew O'Brien
         """
-        coor_list = []
-        coordinates_list = coordinates.split()
-        coordinates_list.insert(0, '00')
+        self._job(self._grid_movement, [coordinates, speed, rotation])
+    def _grid_movement(self, coordinates, speed, rotation):
+        coordinates_temp = coordinates.split()
+        coordinates = [[0, 0]]
+        for each_coordinate in coordinates_temp:
+            coordinates.append(each_coordinate.split(","))
 
-        for k in range(1, len(coordinates_list)):
-            location = coordinates_list[k - 1]
-            coordinate = coordinates_list[k]
-            self._job(self._grid_movement, [coordinate, location])
-        robotLogger.add("%s%s" % (coordinates, location), "grid_movement")
+        for k in range(1, len(coordinates)):
+            location = coordinates[k - 1]
+            coordinate = coordinates[k]
+            x_initial = int(location[0])
+            y_initial = int(location[1])
+            rotation_left = 45
+            rotation_right = -45
+            x = int(coordinate[0])
+            y = int(coordinate[1])
+            robotLogger.add("%d,%d==>%d,%d"%(x_initial, y_initial, x, y), "_grid_movement")
 
-    def _grid_movement(self, coordinate, location):
-        x_initial = int(location[0])
-        y_initial = int(location[1])
-        speed = 100
-        rotation_left = 90
-        rotation_right = -90
-        x = int(coordinate[0])
-        y = int(coordinate[1])
+            if x > x_initial:
+                self.connection.go(speed, 0)
+                time.sleep(x - x_initial)
+                self.connection.go(0, 0)
+            elif x < x_initial:
+                self.connection.go(0, rotation_left)
+                time.sleep(4)
+                self.connection.go(speed, 0)
+                time.sleep(x_initial - x)
+                self.connection.go(0, 0)
+                time.sleep(1)
+                self.connection.go(0, rotation_right)
+                time.sleep(4)
+                self.connection.go(0, 0)
+                time.sleep(1)
+                self.connection.go(0, 0)
+            else:
+                pass
 
-        if x > x_initial:
-            self.connection.go(speed, 0)
-            time.sleep(x - x_initial)
-        elif x < x_initial:
-            self.connection.go(0, rotation_left)
-            time.sleep(2)
-            self.connection.go(speed, 0)
-            time.sleep(x_initial - x)
-        else:
-            pass
-
+<<<<<<< HEAD
         if y > y_initial:
             self.connection.go(0, rotation_left)
             time.sleep(1)
@@ -279,6 +307,32 @@ class Robot(object):
             else:
                 self.move_autonomously(0,30,0)
                 self._teleportspeed[1] = 30
+=======
+            if y > y_initial:
+                self.connection.go(0, rotation_left)
+                time.sleep(2)
+                self.connection.go(speed, 0)
+                time.sleep(y - y_initial)
+                self.connection.go(0, 0)
+                time.sleep(1)
+                self.connection.go(0, rotation_right)
+                time.sleep(2)
+                self.connection.go(0, 0)
+            elif y < y_initial:
+                self.connection.go(0, rotation_right)
+                time.sleep(2)
+                self.connection.go(speed, 0)
+                time.sleep(y_initial - y)
+                self.connection.go(0, 0)
+                time.sleep(1)
+                self.connection.go(0, rotation_left)
+                time.sleep(2)
+                self.connection.go(0, 0)
+            else:
+                pass
+        self.stop()
+        robotLogger.add("Finished moving.", "_grid_movement", "SUCCESS")
+>>>>>>> origin/master
 
     def __repr__(self):
         """

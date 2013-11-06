@@ -3,6 +3,10 @@ from Robot import Robot
 import tkinter
 from tkinter import ttk
 from logger import robotLogger
+<<<<<<< HEAD
+=======
+from threading import Timer
+>>>>>>> origin/master
 
 class Gui():
     def __init__(self):
@@ -17,6 +21,8 @@ class Gui():
         self.robot.connect()
 
         self.root = tkinter.Tk()
+        self.root.title("Robot GUI")
+
         self.frame = None
         FO = open("mainwindow.xml", "r")
         xml_string = FO.read()
@@ -24,9 +30,7 @@ class Gui():
         self.add_widget(XML(xml_string), self.root).grid()
 
         self.config_widget("btn_connect", {"command": lambda: self.robot.connect()})
-        self.config_widget("btn_stop", {"command": lambda: self.robot.stop()})
-
-        self.config_widget("team_info", {"command": lambda: self.robot.team_info()})
+        self.config_widget("btn_stop", {"command": lambda: self.robot.connection.stop()})
 
         self.config_widget("wilma_bio", {"command": lambda: self.robot.log_information()})
 
@@ -43,7 +47,7 @@ class Gui():
 
         self.coordinates = tkinter.StringVar()
         self.config_widget("grid_entry", {"textvariable": self.coordinates})
-        self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.coordinates.get())})
+        self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.coordinates.get(), self.speed.get(), self.rotation.get())})
 
         self.darkness = tkinter.IntVar()
         self.config_widget("darkness_entry", {"textvariable": self.darkness})
@@ -67,8 +71,9 @@ class Gui():
         self.log_text.grid()
 
         robotLogger.logger_list["GuiLogger"].gui = self
-        print(self, robotLogger.logger_list["GuiLogger"].gui)
 
+        info_time = Timer(2, lambda: self.robot.team_info())
+        info_time.start()
         self.root.mainloop()
 
     def config_widget(self, widget_name, widget_options):
@@ -99,8 +104,14 @@ class Gui():
         if widget_xml.tag == "root":
             self.frame = ttk.Frame(self.root, padding=(20, 30), **widget_xml.attrib)
             for each_widget in widget_xml:
-                ttk_widget = self.add_widget(each_widget, self.frame)
-                ttk_widget.pack()
+                ttk_widget, row_column = self.add_widget(each_widget, self.frame)
+                if not row_column:
+                    ttk_widget.grid()
+                else:
+                    row_column = row_column.split(",")
+                    rows = int(row_column[0])
+                    columns = int(row_column[1])
+                    ttk_widget.grid(row=rows, column=columns)
             return self.frame
         else:
             opt_list = widget_xml.attrib
@@ -108,18 +119,23 @@ class Gui():
                 opt_list = opt_list.copy()
                 for each_widget in widget_xml:
                     opt_list[each_widget.tag] = each_widget.text
-                    # print(each_widget.tag, "," , each_widget.text)
-            return getattr(ttk, widget_xml.tag.capitalize())(top_frame, **opt_list)
-    def __exit__(self):
+            row_column = None
+            if "row_column" in opt_list:
+                row_column = opt_list["row_column"]
+                del opt_list["row_column"]
+            return [getattr(ttk, widget_xml.tag.capitalize())(top_frame, **opt_list), row_column]
+    def exit(self):
         """
         Disconnect the robot when interrupted or terminated.
 
         Contributor: Xiangqing Zhang
         """
+        self.robot.stop()
         self.robot.disconnect()
 
 def main():
     g = Gui()
+    g.exit()
 
 if __name__ == '__main__':
     main()

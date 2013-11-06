@@ -1,36 +1,35 @@
 <root>
-    <button name="btn_connect" text="Connect"></button>
-    <button name="btn_stop" text="Stop"></button>
-    <button name="team_info" text="Team Info"></button>
-    <button name="wilma_bio" text="WILMA's Bio"></button>
-    <label name="speed_entry_label">
+    <button name="btn_connect" text="Connect" row_column="1,1"></button>
+    <button name="btn_stop" text="Stop" row_column="1,2"></button>
+    <button name="wilma_bio" text="WILMA's Bio" row_column="2,1"></button>
+    <button name="btn_forward" text="Forward" row_column="3,1"></button>
+    <button name="btn_backward" text="Backward"  row_column="3,2"></button>
+    <button name="btn_left" text="Left" row_column="4,1"></button>
+    <button name="btn_right" text="Right" row_column="4,2"></button>
+    <label name="speed_entry_label" row_column="5,1">
         <text>Enter a speed: </text>
     </label>
-    <entry name="speed_entry" width='30' />
-    <label name="rotation_entry_label">
+    <entry name="speed_entry" width='20' row_column="5,2"/>
+    <label name="rotation_entry_label" row_column="6,1">
         <text>Enter a rotational speed: </text>
     </label>
-    <entry name="rotation_entry" width='30' />
-    <label name="rotation_entry_label">
+    <entry name="rotation_entry" width='20' row_column="6,2"/>
+    <label name="time_entry_label" row_column="7,1">
         <text>Enter a time: </text>
     </label>
-    <entry name="time_entry" width='30' />
-    <button name="btn_move_autonomously" text="Move Autonomously"></button>
-    <label name="darkness_entry_label">
+    <entry name="time_entry" width='20' row_column="7,2"/>
+    <button name="btn_move_autonomously" text="Move Autonomously" row_column="8,1"></button>
+    <label name="darkness_entry_label" row_column="9,1">
         <text>Enter a darkness: </text>
     </label>
-    <entry name="darkness_entry" width='30' />
-    <button name="btn_go_forward_until_black_line" text="Go Forward Until Black Line"></button>
-    <label name="grid_entry_label">
+    <entry name="darkness_entry" width='30' row_column="9,2"/>
+    <button name="btn_go_forward_until_black_line" text="Go Forward Until Black Line" row_column="9,3"></button>
+    <label name="grid_entry_label" row_column="10,1">
         <text>Enter a list of x, y coordinates: </text>
     </label>
-    <entry name="grid_entry" width='30' />
-    <button name="grid_button" text="Move to this coordinate"></button>
-    <label name="bytecode_entry_label" text="Enter a bytecode:"></label>
-    <entry name="bytecode_entry" width='30' />
-    <button name="btn_bytecode_entry" text="Sending Bytecode"></button>
-    <button name="btn_forward" text="Forward"></button>
-    <button name="btn_backward" text="Backward"></button>
-    <button name="btn_left" text="Left"></button>
-    <button name="btn_right" text="Right"></button>
+    <entry name="grid_entry" width='30' row_column="10,2"/>
+    <button name="grid_button" text="Move to this coordinate" row_column="10,3"></button>
+    <label name="bytecode_entry_label" text="Enter a bytecode:" row_column="11,1"></label>
+    <entry name="bytecode_entry" width='30' row_column="11,2"/>
+    <button name="btn_bytecode_entry" text="Receiving Bytecode" row_column="11,3"></button>
 </root>
