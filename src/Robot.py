@@ -283,7 +283,7 @@ class Robot(object):
                 self._move_autonomously(-10,0)
                 self._teleportspeed[0] = -10
                 self._teleportspeed[1] = 0
-        if(command == "Left"):
+        if(command == "Right"):
             if(self._teleportspeed[1]<0):
                 self._move_autonomously(0,self._teleportspeed[1]-30)
                 self._teleportspeed[1] += -30
@@ -291,7 +291,7 @@ class Robot(object):
                 self._move_autonomously(0,-30)
                 self._teleportspeed[1] = -30
                 self._teleportspeed[0] = 0
-        if(command == "Right"):
+        if(command == "Left"):
             if(self._teleportspeed[1]>0):
                 self._move_autonomously(0,self._teleportspeed[1]+30)
                 self._teleportspeed[1] += 30
