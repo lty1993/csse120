@@ -16,6 +16,7 @@ class Robot(object):
         self.connection = None
         self.port = port
         self.job = None
+        self._sendIR = False
         self._teleportspeed = [0,0];
 
     def _job(self, function, args=None, kwargs=None, life_span=0):
@@ -100,7 +101,8 @@ class Robot(object):
         Stops the robot.
         Contributor: Xiangqing Zhang.
         """
-        self._teleportspeed = [0,0];
+        self._teleportspeed = [0,0]
+        self._sendIR = False
         if self.job:
             Job.in_use = False
             self.job = None
@@ -145,10 +147,11 @@ class Robot(object):
         # TODO: Test in the REAL robot!
         self._job(self._chat_with_another_robot, [bytecode])
     def _chat_with_another_robot(self, bytecode):
+        self._sendIR = True
         sensor = our_create.Sensors.ir_byte
-        while True:
+        while self._sendIR:
             self.connection.sendIR(bytecode)
-            while True:
+            while self._sendIR:
                 sensor_values = self.connection.getSensor(sensor)
                 robotLogger.add("bytecode: %d"%sensor_values, "_chat_with_another_robot")
                 if sensor_values != 255:
