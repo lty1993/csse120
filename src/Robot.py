@@ -265,7 +265,7 @@ class Robot(object):
             
     
     def teleport(self, commands):
-        self._job(self._teleport, commands);
+        self._job(self._teleport, [commands]);
         
     def _teleport(self, command):
         if(command == "Forward"):
