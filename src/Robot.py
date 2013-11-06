@@ -105,23 +105,6 @@ class Robot(object):
         if self.job:
             self.job.terminated = True
 
-    def teleport(self, command, speed, seconds):
-        """
-        User can move WILMA forward and backward, spin WILMA left and right.
-        User can change speed during teleoperation.
-        Feature: 3a
-        Contributor: Tianyu Liu
-        """
-        self._job(self._teleport, [command]);
-    def _teleport(self, command):
-        if(command == "Forward"):
-            self._move_autonomously(speed, 0)
-        if(command == "Backward"):
-            self._move_autonomously(-speed, 0)
-        if(command == "Left"):
-            self._move_autonomously(0, -rotation)
-        if(command == "Right"):
-            self._move_autonomously(0, rotation)
     def move_autonomously(self, speed, rotation, seconds):
         """
         Move autonomously at user-specified directional and rotational speed
