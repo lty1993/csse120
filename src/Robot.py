@@ -17,6 +17,8 @@ class Robot(object):
         self.port = port
         self.job = None
         self._sendIR = False
+        self._follow_line = False
+        self._forward_until_black_line = False
         self._teleportspeed = [0,0];
 
     def _job(self, function, args=None, kwargs=None, life_span=0):
@@ -101,8 +103,11 @@ class Robot(object):
         Stops the robot.
         Contributor: Xiangqing Zhang.
         """
+        # robotLogger.add("Terminating", "self.stop")
         self._teleportspeed = [0,0]
         self._sendIR = False
+        self._follow_line = False
+        self._forward_until_black_line = False
         if self.job:
             Job.in_use = False
             self.job = None
@@ -129,11 +134,13 @@ class Robot(object):
         if darkness <= 0: darkness = 500
         self._job(self._go_forward_until_black_line, [speed, darkness])
     def _go_forward_until_black_line(self, speed, darkness):
+        self._forward_until_black_line = True
         sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal]
-        while True:
+        while self._forward_until_black_line:
             self._move_autonomously(speed, 0)
             sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])]
             if sensor_values[0] < darkness or sensor_values[1] < darkness: break
+        self.stop()
     def chat_with_another_robot(self, bytecode):
         """
         User can make WILMA start/stop emitting a user-specified IR signal.
@@ -310,21 +317,29 @@ class Robot(object):
         self._job(self._follow_black_line, [speed, darkness]);
     
     def _follow_black_line(self, speed, darkness):
+        self._follow_line = True
         sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal];
         if darkness <= 0: darkness = 500;
         self.connection.go(speed, 0);
-        while True:
+        while self._follow_line:
+            # robotLogger.add("%s"%self._follow_line, "_follow_black_line")
+            temp1 = True;
             sensor_value = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])];
-            if(sensor_value[0] < darkness):
+            if (sensor_value[0]< darkness and sensor_value[1]<darkness and temp1) or (sensor_value[0] < darkness and temp1):
                 self.connection.stop();
-                self.connection.go(0, 30);
-                time.sleep(0.1);
-                self.connection.go(speed, 0);
-            if(sensor_value[1] < darkness):
+                self.connection.go(0, 180);
+                time.sleep(0.2);
                 self.connection.stop();
-                self.connection.go(0, -30);
-                time.sleep(0.1);
+                temp1 = False;
+            if(sensor_value[1] < darkness and temp1):
+                self.connection.stop();
+                self.connection.go(0, -180);
+                time.sleep(0.2);
+                self.connection.stop();
+                temp1 = False;
+            if temp1:
                 self.connection.go(speed, 0);
+        self.stop()
 
     def __repr__(self):
         """
