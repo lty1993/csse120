@@ -307,7 +307,7 @@ class Robot(object):
         sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal];
         if darkness <= 0: darkness = 500;
         self.connection.go(speed, 0);
-        while True:
+        while True and not self.job.terminated:
             sensor_value = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])];
             if(sensor_value[0] < darkness):
                 self.connection.stop();
