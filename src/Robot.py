@@ -265,7 +265,7 @@ class Robot(object):
             
     
     def teleport(self, command):
-        self._job(self._chat_with_another_robot, command);
+        self._job(self._teleport, command);
         
     def _teleport(self, command):
         if(command == "Forward"):
