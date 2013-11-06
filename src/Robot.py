@@ -201,10 +201,20 @@ class Robot(object):
         """
         self._job(self._grid_movement, [coordinates, speed, rotation])
     def _grid_movement(self, coordinates, speed, rotation):
-        coordinates_temp = coordinates.split()
-        coordinates = [[0, 0]]
-        for each_coordinate in coordinates_temp:
-            coordinates.append(each_coordinate.split(","))
+
+        if coordinates == 'coordinates.txt':
+            FO = open("coordinates.txt", "r")
+            coordinates_from_file = FO.read()
+            FO.close()
+            coordinates_temp = coordinates_from_file.split()
+            coordinates = [[0, 0]]
+            for each_coordinate in coordinates_temp:
+                coordinates.append(each_coordinate.split(","))
+        else:
+            coordinates_temp = coordinates.split()
+            coordinates = [[0, 0]]
+            for each_coordinate in coordinates_temp:
+                coordinates.append(each_coordinate.split(","))
 
         for k in range(1, len(coordinates)):
             location = coordinates[k - 1]
@@ -220,6 +230,12 @@ class Robot(object):
             y_distance = y - y_initial
             x_distance = x - x_initial
             r = math.sqrt(x_distance ** 2 + y_distance ** 2)
+            if speed == 0:  # give an initial speed if none is provided
+                speed = 20
+            elif speed > 50:  # limit speed to 50 for accuracy
+                speed = 50
+            unit_time = (100 / speed) * r
+
             if x_distance == 0 and y_distance > 0:  # positive y-axis
                 degrees = 90
             elif x_distance == 0 and y_distance < 0:  # negative y-axis
@@ -237,18 +253,19 @@ class Robot(object):
             else:
                 pass
 
-            self.connection.go(0, degrees)
-            time.sleep(1)
+            self.connection.go(0, degrees / 4)
+            time.sleep(4)
             self.connection.go(speed, 0)
-            time.sleep(r)
-            self.connection.go(0, -degrees)
-            time.sleep(1)
+            time.sleep(unit_time)
+            self.connection.go(0, -degrees / 4)
+            time.sleep(4)
             self.connection.stop()
 
 #             if x > x_initial:
 #                 self.connection.go(speed, 0)
 #                 time.sleep(x - x_initial)
 #                 self.connection.go(0, 0)
+#                 time.sleep(1)
 #             elif x < x_initial:
 #                 self.connection.go(0, rotation_left)
 #                 time.sleep(4)
@@ -261,6 +278,7 @@ class Robot(object):
 #                 self.connection.go(0, 0)
 #                 time.sleep(1)
 #                 self.connection.go(0, 0)
+#                 time.sleep(1)
 #             else:
 #                 pass
 #
@@ -274,6 +292,7 @@ class Robot(object):
 #                 self.connection.go(0, rotation_right)
 #                 time.sleep(2)
 #                 self.connection.go(0, 0)
+#                 time.sleep(1)
 #             elif y < y_initial:
 #                 self.connection.go(0, rotation_right)
 #                 time.sleep(2)
@@ -284,6 +303,7 @@ class Robot(object):
 #                 self.connection.go(0, rotation_left)
 #                 time.sleep(2)
 #                 self.connection.go(0, 0)
+#                 time.sleep(1)
 #             else:
 #                 pass
         self.stop()

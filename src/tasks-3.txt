@@ -18,4 +18,4 @@ DATE-STARTED, DATE-DUE/ENDED.  DESCRIBE-TASK.  STATUS.  HOURS.
 
 SPRINT2
 
-11-4          11-4.            f7-b         IN-PROGRESS 1.5
+11-4          11-4.            f7-b         IN-PROGRESS 2
