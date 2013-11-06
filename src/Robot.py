@@ -270,31 +270,31 @@ class Robot(object):
     def _teleport(self, command):
         if(command == "Forward"):
             if(self._teleportspeed[0]>0):
-                self._move_autonomously(self._teleportspeed[0]+10,0,0)
+                self._move_autonomously(self._teleportspeed[0]+10,0)
                 self._teleportspeed[0]+=10
             else:
-                self._move_autonomously(10,0,0)
+                self._move_autonomously(10,0)
                 self._teleportspeed[0] = 10
         if(command == "Backward"):
             if(self._teleportspeed[0]<0):
-                self._move_autonomously(self._teleportspeed[0]-10,0,0)
+                self._move_autonomously(self._teleportspeed[0]-10,0)
                 self._teleportspeed[0]-=10
             else:
-                self._move_autonomously(-10,0,0)
+                self._move_autonomously(-10,0)
                 self._teleportspeed[0] = -10
         if(command == "Left"):
             if(self._teleportspeed[1]<0):
-                self._move_autonomously(0,self._teleportspeed[1]-30,0)
+                self._move_autonomously(0,self._teleportspeed[1]-30)
                 self._teleportspeed[1] += -30
             else:
-                self._move_autonomously(0,-30,0)
+                self._move_autonomously(0,-30)
                 self._teleportspeed[1] = -30
         if(command == "Right"):
             if(self._teleportspeed[1]>0):
-                self._move_autonomously(0,self._teleportspeed[1]+30,0)
+                self._move_autonomously(0,self._teleportspeed[1]+30)
                 self._teleportspeed[1] += 30
             else:
-                self._move_autonomously(0,30,0)
+                self._move_autonomously(0,30)
                 self._teleportspeed[1] = 30
 
     def __repr__(self):
