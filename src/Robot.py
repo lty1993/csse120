@@ -101,6 +101,7 @@ class Robot(object):
         Stops the robot.
         Contributor: Xiangqing Zhang.
         """
+        self._teleportspeed = [0,0];
         if self.job:
             self.job.terminated = True
 
