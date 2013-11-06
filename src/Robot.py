@@ -300,10 +300,10 @@ class Robot(object):
                 self._move_autonomously(0,30)
                 self._teleportspeed[1] = 30
                 self._teleportspeed[0] = 0
-    def follow_black_line(speed, darkness):
+    def follow_black_line(self, speed, darkness):
         self._job(self._follow_black_line, [speed, darkness]);
     
-    def _follow_black_line(speed, darkness):
+    def _follow_black_line(self, speed, darkness):
         sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal];
         if darkness <= 0: darkness = 500;
         self.connection.go(speed, 0);
