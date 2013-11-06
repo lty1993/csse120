@@ -60,7 +60,6 @@ class Robot(object):
             while self.job.is_alive(): pass
             self.job = None
         if self.connection: self.connection.stop()
-        self._teleportspeed=[0,0]
 
     def _log(self, message, method_name, level="DEBUG", logger=None):
         """
@@ -275,6 +274,7 @@ class Robot(object):
             else:
                 self._move_autonomously(10,0)
                 self._teleportspeed[0] = 10
+                self._teleportspeed[1] = 0
         if(command == "Backward"):
             if(self._teleportspeed[0]<0):
                 self._move_autonomously(self._teleportspeed[0]-10,0)
@@ -282,6 +282,7 @@ class Robot(object):
             else:
                 self._move_autonomously(-10,0)
                 self._teleportspeed[0] = -10
+                self._teleportspeed[1] = 0
         if(command == "Left"):
             if(self._teleportspeed[1]<0):
                 self._move_autonomously(0,self._teleportspeed[1]-30)
@@ -289,6 +290,7 @@ class Robot(object):
             else:
                 self._move_autonomously(0,-30)
                 self._teleportspeed[1] = -30
+                self._teleportspeed[0] = 0
         if(command == "Right"):
             if(self._teleportspeed[1]>0):
                 self._move_autonomously(0,self._teleportspeed[1]+30)
@@ -296,6 +298,7 @@ class Robot(object):
             else:
                 self._move_autonomously(0,30)
                 self._teleportspeed[1] = 30
+                self._teleportspeed[0] = 0
 
     def __repr__(self):
         """
