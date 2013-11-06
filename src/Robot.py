@@ -40,7 +40,7 @@ class Robot(object):
         Contributor: Xiangqing Zhang
         """
         if not self.connection: self.connect()
-        if self.job and self.job.is_alive():
+        if self.job:
             self._log("The robot connection is busy. Terminating the current process...", "_job", "WARNING")
             self._job_clear()
             self._log("The robot connection has been terminated successfully.", "SUCCESS")
@@ -56,8 +56,7 @@ class Robot(object):
         Contributor: Xiangqing Zhang
         """
         if self.job:
-            self.job.terminated = True
-            while self.job.is_alive(): pass
+            Job.in_use = False
             self.job = None
         if self.connection: self.connection.stop()
 
@@ -103,7 +102,9 @@ class Robot(object):
         """
         self._teleportspeed = [0,0];
         if self.job:
-            self.job.terminated = True
+            Job.in_use = False
+            self.job = None
+        if self.connection: self.connection.stop()
 
     def move_autonomously(self, speed, rotation, seconds):
         """
@@ -127,11 +128,10 @@ class Robot(object):
         self._job(self._go_forward_until_black_line, [speed, darkness])
     def _go_forward_until_black_line(self, speed, darkness):
         sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal]
-        while True and not self.job.terminated:
+        while True:
             self._move_autonomously(speed, 0)
             sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])]
             if sensor_values[0] < darkness or sensor_values[1] < darkness: break
-        self.connection.stop()
     def chat_with_another_robot(self, bytecode):
         """
         User can make WILMA start/stop emitting a user-specified IR signal.
@@ -143,14 +143,16 @@ class Robot(object):
         Contributor: Xiangqing Zhang
         """
         # TODO: Test in the REAL robot!
-        self._job(self._chat_with_another_robot, bytecode)
+        self._job(self._chat_with_another_robot, [bytecode])
     def _chat_with_another_robot(self, bytecode):
         sensor = our_create.Sensors.ir_byte
         while True:
-            self.robot.sendIR(bytecode)
+            self.connection.sendIR(bytecode)
             while True:
                 sensor_values = self.connection.getSensor(sensor)
-                if sensor_values != 255: break
+                robotLogger.add("bytecode: %d"%sensor_values, "_chat_with_another_robot")
+                if sensor_values != 255:
+                    break
             temp_bytecode = random.randint(0, 255)
             while temp_bytecode == bytecode:
                 temp_bytecode = random.randint(0, 255)
@@ -195,6 +197,7 @@ class Robot(object):
         wilma_bio = FO.read()
         FO.close()
         self._log(wilma_bio, "_log_information")
+        self.stop()
 
     def grid_movement(self, coordinates, speed, rotation):
         """
@@ -307,7 +310,7 @@ class Robot(object):
         sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal];
         if darkness <= 0: darkness = 500;
         self.connection.go(speed, 0);
-        while True and not self.job.terminated:
+        while True:
             sensor_value = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])];
             if(sensor_value[0] < darkness):
                 self.connection.stop();

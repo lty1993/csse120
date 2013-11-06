@@ -15,7 +15,7 @@ class Gui():
         self.speed = None
         self.rotation = None
         self.time = None
-        self.robot = Robot()
+        self.robot = Robot(7)
         self.robot.connect()
 
         self.root = tkinter.Tk()
@@ -28,7 +28,7 @@ class Gui():
         self.add_widget(XML(xml_string), self.root).grid()
 
         self.config_widget("btn_connect", {"command": lambda: self.robot.connect()})
-        self.config_widget("btn_stop", {"command": lambda: self.robot.connection.stop()})
+        self.config_widget("btn_stop", {"command": lambda: self.robot.stop()})
 
         self.config_widget("wilma_bio", {"command": lambda: self.robot.log_information()})
 

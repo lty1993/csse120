@@ -15,12 +15,9 @@ class Job(threading.Thread):
         self.job_args = args if args is not None else []
         self.job_kwargs = kwargs if kwargs is not None else {}
         # Prefix "job_" helps avoid conflicts with fields in the Threading class.
-        self.terminated = False
         super().__init__()
     def run(self):
         self.job_function(*self.job_args, **self.job_kwargs)
-        while 1:
-            if self.terminated: break
         Job.in_use = False
     def __exit__(self):
         Job.in_use = False
