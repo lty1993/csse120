@@ -1,6 +1,7 @@
 <root>
     <button name="btn_connect" text="Connect" row_column="1,1"></button>
     <button name="btn_stop" text="Stop" row_column="1,2"></button>
+    <button name="btn_follow" text="Follow Black Line" row_column="2,2"></button>
     <button name="wilma_bio" text="WILMA's Bio" row_column="2,1"></button>
     <button name="btn_forward" text="Forward" row_column="3,1"></button>
     <button name="btn_backward" text="Backward"  row_column="3,2"></button>

@@ -253,7 +253,7 @@ class Robot(object):
                 time.sleep(2)
                 self.connection.go(speed, 0)
                 time.sleep(y_initial - y)
-                self.connection.go(0, 0)
+                self.connection.go(0, 0)        sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])];
                 time.sleep(1)
                 self.connection.go(0, rotation_left)
                 time.sleep(2)
@@ -300,6 +300,25 @@ class Robot(object):
                 self._move_autonomously(0,30)
                 self._teleportspeed[1] = 30
                 self._teleportspeed[0] = 0
+    def follow_black_line(speed, darkness):
+        self._job(self._follow_black_line, [speed, darkness]);
+    
+    def _follow_black_line(speed, darkness):
+        sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal];
+        if darkness <= 0: darkness = 500;
+        self.connection.go(speed, 0);
+        while(1):
+            sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])]
+            if(sensor_values[0] < darkness):
+                self.connection.stop();
+                self.connection.go(0, 30);
+                time.sleep(0.1);
+                self.connection.go(speed, 0);
+            if(sensor_values[1] < darkness):
+                self.connection.stop();
+                self.connection.go(0, -30);
+                time.sleep(0.1);
+                self.connection.go(speed, 0);
 
     def __repr__(self):
         """

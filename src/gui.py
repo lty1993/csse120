@@ -61,6 +61,7 @@ class Gui():
         self.config_widget("btn_backward", {"command": lambda: self.robot.teleport("Backward")})
         self.config_widget("btn_left", {"command": lambda: self.robot.teleport("Left")})
         self.config_widget("btn_right", {"command": lambda: self.robot.teleport("Right")})
+        self.config_widget("btn_follow", {"command": lambda: self.robot.follow_black_line(self.speed.get(), self.darkness.get())})
 
         self.log_frame = ttk.Frame(self.root)
         self.log_frame.grid()
