@@ -57,10 +57,10 @@ class Gui():
 
         self.config_widget("btn_bytecode_entry", {"command": lambda: self.robot.chat_with_another_robot(self.bytecode.get())})
         
-        self.config_widget("btn_forward", {"command": lambda: self.robot.teleport("Forward")})
-        self.config_widget("btn_backward", {"command": lambda: self.robot.teleport("Backward")})
-        self.config_widget("btn_left", {"command": lambda: self.robot.teleport("Left")})
-        self.config_widget("btn_right", {"command": lambda: self.robot.teleport("Right")})
+        self.config_widget("btn_forward", {"Forward": lambda: self.robot.teleport()})
+        self.config_widget("btn_backward", {"Backward": lambda: self.robot.teleport()})
+        self.config_widget("btn_left", {"Left": lambda: self.robot.teleport()})
+        self.config_widget("btn_right", {"Right": lambda: self.robot.teleport()})
 
         self.log_frame = ttk.Frame(self.root)
         self.log_frame.grid()
