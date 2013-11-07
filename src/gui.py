@@ -52,6 +52,11 @@ class Gui():
 
         self.config_widget("btn_go_forward_until_black_line", {"command": lambda: self.robot.go_forward_until_black_line(self.speed.get(), self.darkness.get())})
 
+        self.bumper = tkinter.StringVar()
+        self.config_widget("bumper_entry", {"textvariable": self.bumper})
+
+        self.config_widget("btn_go_forward_until_bumps", {"command": lambda: self.robot.})
+
         self.bytecode = tkinter.IntVar()
         self.config_widget("bytecode_entry", {"textvariable": self.bytecode})
 

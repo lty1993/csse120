@@ -20,7 +20,9 @@ class Robot(object):
         self._sendIR = False
         self._follow_line = False
         self._forward_until_black_line = False
+        self._forward_until_bumps = False
         self._teleportspeed = [0,0];
+        self._ir_signal = -1;
 
     def _job(self, function, args=None, kwargs=None, life_span=0):
         """
@@ -125,6 +127,7 @@ class Robot(object):
         self._job(self._move_autonomously, [speed, rotation], life_span=seconds)
     def _move_autonomously(self, speed, rotation):
         self.connection.go(speed, rotation)
+
     def go_forward_until_black_line(self, speed, darkness=500):
         """
         Go forward at user-specified speed until WILMA reaches a black line,
@@ -137,11 +140,30 @@ class Robot(object):
     def _go_forward_until_black_line(self, speed, darkness):
         self._forward_until_black_line = True
         sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal]
+        self._move_autonomously(speed, 0)
         while self._forward_until_black_line:
-            self._move_autonomously(speed, 0)
             sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])]
             if sensor_values[0] < darkness or sensor_values[1] < darkness: break
+            time.sleep(0.05)
         self.stop()
+    def go_forward_until_bumps(self, speed, bump_sensor):
+        self._job(self._go_forward_until_bumps, [speed, bump_sensor])
+    def _go_forward_until_bumps(self, speed, bump_sensor):
+        self._forward_until_bumps = True
+        sensor = our_create.Sensors.bumps_and_wheel_drops
+        self._move_autonomously(speed, 0)
+        while self._forward_until_bumps:
+            sensor_values = robot.getSensor(sensor)
+            left_bumper_state = sensor_values[3]
+            right_bumper_state = sensor_values[4]
+            if ("L" in bump_sensor) or ("l" in bump_sensor):
+                if left_bumper_state==1:
+                    break
+            if ("R" in bump_sensor) or ("r" in bump_sensor):
+                if right_bumper_state==1:
+                    break
+            time.sleep(0.05)
+
     def chat_with_another_robot(self, bytecode):
         """
         User can make WILMA start/stop emitting a user-specified IR signal.
@@ -218,7 +240,6 @@ class Robot(object):
         """
         self._job(self._grid_movement, [coordinates, speed, rotation])
     def _grid_movement(self, coordinates, speed, rotation):
-
         if coordinates == 'coordinates.txt':
             FO = open("coordinates.txt", "r")
             coordinates_from_file = FO.read()
@@ -251,7 +272,8 @@ class Robot(object):
                 speed = 20
             elif speed > 50:  # limit speed to 50 for accuracy
                 speed = 50
-            unit_time = (100 / speed) * r
+            unit_time = (10 / speed) * r
+            robotLogger.add("unit_time = %.2f, speed = %.2f, s*u = %.2f, r = %.2f"%(unit_time, speed, speed*unit_time, r), "_grid_movement")
 
             if x_distance == 0 and y_distance > 0:  # positive y-axis
                 degrees = 90
@@ -260,30 +282,6 @@ class Robot(object):
             elif y_distance == 0 and x_distance < 0:  # negative x-axis
                 degrees = 180
             else:
-                pass
-            if y > y_initial:
-                self.connection.go(0, rotation_left)
-                time.sleep(2)
-                self.connection.go(speed, 0)
-                time.sleep(y - y_initial)
-                self.connection.go(0, 0)
-                time.sleep(1)
-                self.connection.go(0, rotation_right)
-                time.sleep(2)
-                self.connection.go(0, 0)
-                time.sleep(1)
-            elif y < y_initial:
-                self.connection.go(0, rotation_right)
-                time.sleep(2)
-                self.connection.go(speed, 0)
-                time.sleep(y_initial - y)
-                self.connection.go(0, 0)
-                time.sleep(1)
-                self.connection.go(0, rotation_left)
-                time.sleep(2)
-                self.connection.go(0, 0)
-                time.sleep(1)
-
                 radians = math.atan(y_distance / x_distance)
                 degrees = radians * (180 / math.pi)
 
@@ -302,58 +300,22 @@ class Robot(object):
             time.sleep(4)
             self.connection.stop()
 
-#             if x > x_initial:
-#                 self.connection.go(speed, 0)
-#                 time.sleep(x - x_initial)
-#                 self.connection.go(0, 0)
-#                 time.sleep(1)
-#             elif x < x_initial:
-#                 self.connection.go(0, rotation_left)
-#                 time.sleep(4)
-#                 self.connection.go(speed, 0)
-#                 time.sleep(x_initial - x)
-#                 self.connection.go(0, 0)
-#                 time.sleep(1)
-#                 self.connection.go(0, rotation_right)
-#                 time.sleep(4)
-#                 self.connection.go(0, 0)
-#                 time.sleep(1)
-#                 self.connection.go(0, 0)
-#                 time.sleep(1)
-#             else:
-#                 pass
-#
-#             if y > y_initial:
-#                 self.connection.go(0, rotation_left)
-#                 time.sleep(2)
-#                 self.connection.go(speed, 0)
-#                 time.sleep(y - y_initial)
-#                 self.connection.go(0, 0)
-#                 time.sleep(1)
-#                 self.connection.go(0, rotation_right)
-#                 time.sleep(2)
-#                 self.connection.go(0, 0)
-#                 time.sleep(1)
-#             elif y < y_initial:
-#                 self.connection.go(0, rotation_right)
-#                 time.sleep(2)
-#                 self.connection.go(speed, 0)
-#                 time.sleep(y_initial - y)
-#                 self.connection.go(0, 0)
-#                 time.sleep(1)
-#                 self.connection.go(0, rotation_left)
-#                 time.sleep(2)
-#                 self.connection.go(0, 0)
-#                 time.sleep(1)
-#             else:
-#                 pass
         self.stop()
         robotLogger.add("Finished moving.", "_grid_movement", "SUCCESS")
 
+    def go_forward_until_ir_signal(self, speed, ir_signal):
+        self._job(self._go_forward_until_ir_signal, [speed, ir_signal]);
+    def _go_forward_until_ir_signal(self, speed, ir_signal):
+        
 
     def teleport(self, commands):
+        """
+        User can move WILMA forward and backward, spin WILMA left and right.
+        User can change speed during teleoperation.
+        Feature: 3a
+        Contributor: Tianyu Liu
+        """
         self._job(self._teleport, [commands]);
-
     def _teleport(self, command):
         if(command == "Forward"):
             if(self._teleportspeed[0] > 0):
@@ -387,9 +349,14 @@ class Robot(object):
                 self._move_autonomously(0, 30)
                 self._teleportspeed[1] = 30
                 self._teleportspeed[0] = 0
-    def follow_black_line(self, speed, darkness):
-        self._job(self._follow_black_line, [speed, darkness]);
 
+    def follow_black_line(self, speed, darkness):
+        """
+        WILMA can follow a black line and possibly a wall.
+        Feature: 6a
+        Contributor: Tianyu Liu
+        """
+        self._job(self._follow_black_line, [speed, darkness]);
     def _follow_black_line(self, speed, darkness):
         self._follow_line = True
         sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal];

@@ -14,3 +14,5 @@ DATE-STARTED, DATE-DUE/ENDED.  DESCRIBE-TASK.  STATUS.  HOURS.
 10-27         10-27            Job Class       DONE     1
 10-27         10-28            ft-5a           DONE     2
 10-29         10-30            ft-8a           DONE     1.5
+11-02 11-03 Research on Rogerian psychotherapy DONE     3
+11-05         11-05            Test features   DONE     2
