@@ -234,22 +234,29 @@ class Robot(object):
                 speed = 20
             elif speed > 50:  # limit speed to 50 for accuracy
                 speed = 50
-            unit_time = (100 / speed) * r
+            unit_time = (10 / speed) * r
+            print(speed, unit_time, speed * unit_time)
 
             if x_distance == 0 and y_distance > 0:  # positive y-axis
-                degrees = 90
+                degrees = 0
             elif x_distance == 0 and y_distance < 0:  # negative y-axis
-                degrees = -90
-            elif y_distance == 0 and x_distance < 0:  # negative x-axis
                 degrees = 180
+            elif y_distance == 0 and x_distance < 0:  # negative x-axis
+                degrees = 90
+            elif y_distance == 0 and x_distance > 0:  # positive x-axis
+                degrees = -90
             else:
                 radians = math.atan(y_distance / x_distance)
                 degrees = radians * (180 / math.pi)
 
-            if x_distance < 0 and y_distance > 0:  # 2nd quadrant
-                degrees = 90 - degrees
+            if x_distance > 0 and y_distance > 0:  # 1st quadrant
+                degrees = -degrees
+            elif x_distance < 0 and y_distance > 0:  # 2nd quadrant
+                degrees = -degrees
             elif x_distance < 0 and y_distance < 0:  # 3rd quadrant
-                degrees = 180 + degrees
+                degrees = 90 + degrees
+            elif x_distance > 0 and y_distance < 0:  # 4th quadrant
+                degrees = -90 + degrees
             else:
                 pass
 
