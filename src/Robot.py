@@ -22,7 +22,7 @@ class Robot(object):
         self._forward_until_black_line = False
         self._forward_until_bumps = False
         self._teleportspeed = [0,0];
-        self._ir_signal = -1;
+        self._forward_until_ir_signal = -1;
 
     def _job(self, function, args=None, kwargs=None, life_span=0):
         """
@@ -111,6 +111,8 @@ class Robot(object):
         self._sendIR = False
         self._follow_line = False
         self._forward_until_black_line = False
+        self._forward_until_bumps = False
+        self._forward_until_ir_signal = -1
         if self.job:
             Job.in_use = False
             self.job = None
@@ -147,13 +149,19 @@ class Robot(object):
             time.sleep(0.05)
         self.stop()
     def go_forward_until_bumps(self, speed, bump_sensor):
+        """
+        Go forward at user-specified speed until WILMA bumps into something,
+        where the user specifies whether to use the left bump sensor, the right bump sensor, or both.
+        Feature: 5a-2
+        Contributor: Xiangqing Zhang
+        """
         self._job(self._go_forward_until_bumps, [speed, bump_sensor])
     def _go_forward_until_bumps(self, speed, bump_sensor):
         self._forward_until_bumps = True
         sensor = our_create.Sensors.bumps_and_wheel_drops
         self._move_autonomously(speed, 0)
         while self._forward_until_bumps:
-            sensor_values = robot.getSensor(sensor)
+            sensor_values = self.connection.getSensor(sensor)
             left_bumper_state = sensor_values[3]
             right_bumper_state = sensor_values[4]
             if ("L" in bump_sensor) or ("l" in bump_sensor):
@@ -163,6 +171,7 @@ class Robot(object):
                 if right_bumper_state==1:
                     break
             time.sleep(0.05)
+        self.stop()
 
     def chat_with_another_robot(self, bytecode):
         """
@@ -186,6 +195,7 @@ class Robot(object):
                 robotLogger.add("bytecode: %d" % sensor_values, "_chat_with_another_robot")
                 if sensor_values != 255:
                     break
+                time.sleep(0.05)
             temp_bytecode = random.randint(0, 255)
             while temp_bytecode == bytecode:
                 temp_bytecode = random.randint(0, 255)
@@ -303,10 +313,58 @@ class Robot(object):
         self.stop()
         robotLogger.add("Finished moving.", "_grid_movement", "SUCCESS")
 
-    def go_forward_until_ir_signal(self, speed, ir_signal):
-        self._job(self._go_forward_until_ir_signal, [speed, ir_signal]);
-    def _go_forward_until_ir_signal(self, speed, ir_signal):
-        
+    def go_forward_until_ir_signal(self, speed, bytecode):
+        """
+        Go forward at user-specified speed until WILMA hears a user-specified IR signal.
+        User can generate a user-specified signal while doing so.
+        Feature: 5b-1
+        Contributor: Xiangqing Zhang
+        """
+        self._job(self._go_forward_until_ir_signal, [speed, bytecode]);
+    def _go_forward_until_ir_signal(self, speed, bytecode):
+        self._forward_until_ir_signal = True
+        sensor = our_create.Sensors.ir_byte
+        self._move_autonomously(speed, 0)
+        while self._forward_until_ir_signal:
+            sensor_values = self.connection.getSensor(sensor)
+            if sensor_values == bytecode:
+                break
+            time.sleep(0.05)
+        self.stop()
+
+    def go_forward_until_stuck(self, speed):
+        """
+        Go forward until it is “stuck” (still trying to move),
+        no matter what the direction (not just forward).
+        Feature: 5b-2
+        Contributor: Xiangqing Zhang
+        """
+        self._job(self._go_forward_until_stuck, [speed]);
+    def _go_forward_until_stuck(self, speed):
+        self._forward_until_stuck = True
+        self._move_autonomously(speed, 0)
+        sensor = our_create.Sensors.bumps_and_wheel_drops
+        while self._forward_until_stuck:
+            sensor_values = self.connection.getSensor(sensor)
+            left_bumper_state = sensor_values[3]
+            right_bumper_state = sensor_values[4]
+            if left_bumper_state==1 or right_bumper_state==1:
+                total_time = 0
+                self._move_autonomously(speed, 45)
+                while self._forward_until_stuck and total_time<10:
+                    time.sleep(0.05)
+                    sensor_values = self.connection.getSensor(sensor)
+                    left_bumper_state = sensor_values[3]
+                    right_bumper_state = sensor_values[4]
+                    robotLogger.add("%d, %d"%(left_bumper_state, right_bumper_state), "_go_forward_until_stuck")
+                    if left_bumper_state==1 or right_bumper_state==1:
+                        total_time += 0.05
+                    else:
+                        break
+                if total_time>10: break
+                self._move_autonomously(speed, 0)
+            time.sleep(0.05)
+        self.stop()
 
     def teleport(self, commands):
         """

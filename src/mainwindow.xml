@@ -20,6 +20,8 @@
     </label>
     <entry name="time_entry" width='20' row_column="7,2"/>
     <button name="btn_move_autonomously" text="Move Autonomously" row_column="8,1"></button>
+    <button name="btn_go_forward_until_ir_signal" text="Go Forward Until IR Signal" row_column="8,2"></button>
+    <button name="btn_go_forward_until_stuck" text="Go Forward Until Stuck" row_column="8,3"></button>
     <label name="darkness_entry_label" row_column="9,1">
         <text>Enter a darkness: </text>
     </label>

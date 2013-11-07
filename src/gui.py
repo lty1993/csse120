@@ -7,7 +7,7 @@ from threading import Timer
 
 
 class Gui():
-    def __init__(self):
+    def __init__(self, port="sim"):
         """
         A gui used to autonomously control the robot with user-specified speed, rotation, and time.
         Contributor: Matthew O'Brien, Xiangqing Zhang, Tianyu Liu
@@ -15,7 +15,7 @@ class Gui():
         self.speed = None
         self.rotation = None
         self.time = None
-        self.robot = Robot(7)
+        self.robot = Robot(port)
         self.robot.connect()
 
         self.root = tkinter.Tk()
@@ -55,13 +55,15 @@ class Gui():
         self.bumper = tkinter.StringVar()
         self.config_widget("bumper_entry", {"textvariable": self.bumper})
 
-        self.config_widget("btn_go_forward_until_bumps", {"command": lambda: self.robot.})
+        self.config_widget("btn_go_forward_until_bumps", {"command": lambda: self.robot.go_forward_until_bumps(self.speed.get(), self.bumper.get())})
 
         self.bytecode = tkinter.IntVar()
         self.config_widget("bytecode_entry", {"textvariable": self.bytecode})
 
         self.config_widget("btn_bytecode_entry", {"command": lambda: self.robot.chat_with_another_robot(self.bytecode.get())})
-        
+        self.config_widget("btn_go_forward_until_ir_signal", {"command": lambda: self.robot.go_forward_until_ir_signal(self.speed.get(), self.bytecode.get())})
+        self.config_widget("btn_go_forward_until_stuck", {"command": lambda: self.robot.go_forward_until_stuck(self.speed.get())})
+
         self.config_widget("btn_forward", {"command": lambda: self.robot.teleport("Forward")})
         self.config_widget("btn_backward", {"command": lambda: self.robot.teleport("Backward")})
         self.config_widget("btn_left", {"command": lambda: self.robot.teleport("Left")})
