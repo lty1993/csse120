@@ -15,7 +15,8 @@ DATE-STARTED, DATE-DUE/ENDED.  DESCRIBE-TASK.  STATUS.  HOURS.
 10-30         11-1.            f7a-1           DONE     2
 11-1          11-1.            f7a-2           DONE     1
 10-31         11-1.            f1              DONE.    1
-
-SPRINT2
-
-11-4          11-4.            f7-b         IN-PROGRESS 2
+11-4          11-6.            polar-grid      DONE     2
+11-7          11-7.            grid map        DONE    .5
+11-6          11-6.          move in curves    DONE    .5
+11-7          11-7.         improve autonomous DONE     1
+11-4          11-7.            merge work      DONE     1

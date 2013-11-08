@@ -55,15 +55,17 @@ class Gui():
         self.config_widget("bytecode_entry", {"textvariable": self.bytecode})
 
         self.config_widget("btn_bytecode_entry", {"command": lambda: self.robot.chat_with_another_robot(self.bytecode.get())})
-        
+
         self.config_widget("btn_forward", {"command": lambda: self.robot.teleport("Forward")})
         self.config_widget("btn_backward", {"command": lambda: self.robot.teleport("Backward")})
         self.config_widget("btn_left", {"command": lambda: self.robot.teleport("Left")})
         self.config_widget("btn_right", {"command": lambda: self.robot.teleport("Right")})
+#
+#         self.config_widget("gui_map", {"command": lambda event: left_mouse_click(event)})
 
         self.log_frame = ttk.Frame(self.root)
         self.log_frame.grid()
-        self.log_text = tkinter.Text(self.log_frame, width=150, height=20, wrap=tkinter.CHAR) #state=tkinter.DISABLED) 
+        self.log_text = tkinter.Text(self.log_frame, width=150, height=20, wrap=tkinter.CHAR)  # state=tkinter.DISABLED)
         # self.log_text.insert(tkinter.INSERT, "DEBUG")
         self.log_text.grid()
 
@@ -120,7 +122,14 @@ class Gui():
             if "row_column" in opt_list:
                 row_column = opt_list["row_column"]
                 del opt_list["row_column"]
-            return [getattr(ttk, widget_xml.tag.capitalize())(top_frame, **opt_list), row_column]
+            try:
+                gui_result = [getattr(ttk, widget_xml.tag.capitalize())(top_frame, **opt_list), row_column]
+            except:
+                gui_result = [getattr(tkinter, widget_xml.tag.capitalize())(top_frame, **opt_list), row_column]
+            return gui_result
+    def left_mouse_click(event):
+        canvas = event.widget
+        canvas.create_oval(event.x - 10, event.y - 10, event.x + 10, event.y + 10, fill='green', width=3)
     def exit(self):
         """
         Disconnect the robot when interrupted or terminated.
