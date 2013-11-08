@@ -40,4 +40,5 @@
     <label name="bytecode_entry_label" text="Enter a bytecode:" row_column="12,1"></label>
     <entry name="bytecode_entry" width='30' row_column="12,2"/>
     <button name="btn_bytecode_entry" text="Receiving Bytecode" row_column="12,3"></button>
+    <canvas name="gui_map" background='lightgray' row_column="1,6"></canvas>
 </root>

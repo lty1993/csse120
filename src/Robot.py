@@ -6,6 +6,7 @@ import random
 import time
 import math
 
+
 class Robot(object):
     """
     The bridge class of the Robot.
@@ -270,38 +271,47 @@ class Robot(object):
         for k in range(1, len(coordinates)):
             location = coordinates[k - 1]
             coordinate = coordinates[k]
-            x_initial = int(location[0])
-            y_initial = int(location[1])
+            x_initial = float(location[0])
+            y_initial = float(location[1])
             rotation_left = 45
             rotation_right = -45
-            x = int(coordinate[0])
-            y = int(coordinate[1])
+            no_rotation = 0
+            default_speed = 20
+            max_speed = 40
+            x = float(coordinate[0])
+            y = float(coordinate[1])
             robotLogger.add("%d,%d==>%d,%d" % (x_initial, y_initial, x, y), "_grid_movement")
 
             y_distance = y - y_initial
             x_distance = x - x_initial
             r = math.sqrt(x_distance ** 2 + y_distance ** 2)
             if speed == 0:  # give an initial speed if none is provided
-                speed = 20
-            elif speed > 50:  # limit speed to 50 for accuracy
-                speed = 50
+                speed = default_speed
+            elif speed > 40:  # limit speed to 40 for accuracy
+                speed = max_speed
             unit_time = (10 / speed) * r
-            robotLogger.add("unit_time = %.2f, speed = %.2f, s*u = %.2f, r = %.2f"%(unit_time, speed, speed*unit_time, r), "_grid_movement")
+            print(speed, unit_time, speed * unit_time)
 
             if x_distance == 0 and y_distance > 0:  # positive y-axis
-                degrees = 90
+                degrees = no_rotation
             elif x_distance == 0 and y_distance < 0:  # negative y-axis
-                degrees = -90
+                degrees = rotation_left * 4
             elif y_distance == 0 and x_distance < 0:  # negative x-axis
-                degrees = 180
+                degrees = rotation_left * 2
+            elif y_distance == 0 and x_distance > 0:  # positive x-axis
+                degrees = rotation_right * 2
             else:
                 radians = math.atan(y_distance / x_distance)
                 degrees = radians * (180 / math.pi)
 
-            if x_distance < 0 and y_distance > 0:  # 2nd quadrant
-                degrees = 90 - degrees
+            if x_distance > 0 and y_distance > 0:  # 1st quadrant
+                degrees = -degrees
+            elif x_distance < 0 and y_distance > 0:  # 2nd quadrant
+                degrees = -degrees
             elif x_distance < 0 and y_distance < 0:  # 3rd quadrant
-                degrees = 180 + degrees
+                degrees = 90 + degrees
+            elif x_distance > 0 and y_distance < 0:  # 4th quadrant
+                degrees = -90 + degrees
             else:
                 pass
 
