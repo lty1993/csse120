@@ -8,7 +8,12 @@ Your name: Tianyu Liu
 
 DATE-STARTED, DATE-DUE/ENDED.  DESCRIBE-TASK.  STATUS.  HOURS.
 10-24         10-25            m1              DONE     0.5
+10-24       10-25 [our_create.py] API research DONE     2
 10-25         10-25            m1              DONE     1
+10-25       10-26 [our_create.py] PWM Reader   DONE     2
+10-26       10-28 [our_create.py] TCP Server   DONE     2
 10-28         11-01            ft-3a           DONE     2
-11-01         11-06            ft-3b           TODO     2
-10-31         11-06            ft-6a           TODO     2
+10-29 11-03 [our_create.py]Serial Over Ethenet DONE     2
+10-31         11-06            ft-6a           DONE     2
+11-01         11-06            ft-3b           DONE     2
+11-03     11-05 [our_create.py] create TCP API DONE     2

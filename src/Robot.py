@@ -189,7 +189,9 @@ class Robot(object):
         self._sendIR = True
         sensor = our_create.Sensors.ir_byte
         while self._sendIR:
-            self.connection.sendIR(bytecode)
+            t = Timer(0.1, lambda: self.connection.sendIR(bytecode))
+            t.start()
+            # self.connection.sendIR(bytecode)
             while self._sendIR:
                 sensor_values = self.connection.getSensor(sensor)
                 robotLogger.add("bytecode: %d" % sensor_values, "_chat_with_another_robot")
@@ -200,6 +202,7 @@ class Robot(object):
             while temp_bytecode == bytecode:
                 temp_bytecode = random.randint(0, 255)
             bytecode = temp_bytecode
+        t.cancel()
     def follow_with_black_line(self):
         self._job(self._follow_with_black_line);
     def _follow_with_black_line(self):
@@ -446,9 +449,6 @@ class Robot(object):
         Contributor: Xiangqing Zhang
         """
         return 'An our_create robot connection with port {}'.format(self.port)
-# print("hello")
 
-# git add .
-# git status
-# git commit -m "message"
-# git push
+if __name__ == '__main__':
+    print("Welcome to the ROBOT CLASS!")

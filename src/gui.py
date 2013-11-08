@@ -140,7 +140,7 @@ class Gui():
         self.robot.disconnect()
 
 def main():
-    g = Gui()
+    g = Gui(9)
     g.exit()
 
 if __name__ == '__main__':
