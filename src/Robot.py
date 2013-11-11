@@ -3,7 +3,7 @@ from threading import Timer, Thread
 from logger import robotLogger
 from job import Job
 from secure import RobotEncryption
-import eliza
+from eliza import eliza
 import time
 import math
 
@@ -17,6 +17,7 @@ class Robot(object):
     def __init__(self, port="sim"):
         self.connection = None
         self.port = port
+        self.eliza = eliza()
         self.job = None
         self.robotEncryption = RobotEncryption()
         self._send_bytecode_flag = False
@@ -319,7 +320,7 @@ class Robot(object):
                     content_length = self.__from_binary(verify_result[2:])
                     self.connection.sendIR([0, 1, 0, 0, 0, 0, 0, 0])
             received_list.extend(group_list)
-    return received_list
+        return received_list
     def __receive_bytecode(self, wait_cycles=10):
         """
         Wait until bytecode received. Will abort after wait_cycles.
@@ -665,7 +666,18 @@ class Robot(object):
         self._send_bytecode(self.robotEncryption.toIR(self.RobotEncryption.encrypt(message)))
     def _decode_code_message(self, message):
         bytecode_list = self._receive_bytecode()
-        message["text"] = robotEncryption.decrypt(robotEncryption.fromIR(bytecode_list))
+        message.set(robotEncryption.decrypt(robotEncryption.fromIR(bytecode_list)))
+
+    def chat_with_robot(self, message):
+        """
+        WILMA offers Rogerian psychotherapy, ala Eliza (http://en.wikipedia.org/wiki/ELIZA).
+        Uses a third-party library by Joe Strout.
+        Converted from Python 2.0 to Python 3.3 by Xiangqing Zhang.
+        Feature: 12
+        Contributor: Xiangqing Zhang
+        """
+        robotLogger.add(self.eliza.respond(message.get()), "Wilma says:", "INFO")
+        message.set("")
 
     def __repr__(self):
         """

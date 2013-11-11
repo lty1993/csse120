@@ -73,6 +73,11 @@ class Gui():
         self.config_widget("btn_right", {"command": lambda: self.robot.teleport("Right")})
         self.config_widget("btn_follow", {"command": lambda: self.robot.follow_black_line(self.speed.get(), self.darkness.get())})
 
+        self.chat_message = tkinter.StringVar()
+        self.config_widget("chat_with_robot_entry", {"textvariable": self.chat_message})
+        self.frame.children["chat_with_robot_entry"].bind("<Key-Return>", lambda event: self.robot.chat_with_robot(self.chat_message))
+        self.config_widget("btn_chat_with_robot_entry", {"command": lambda: self.robot.chat_with_robot(self.chat_message)})
+
         self.log_frame = ttk.Frame(self.root)
         self.log_frame.grid()
         self.log_text = tkinter.Text(self.log_frame, width=150, height=20, wrap=tkinter.CHAR)  # state=tkinter.DISABLED)

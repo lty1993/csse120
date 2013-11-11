@@ -45,5 +45,10 @@
     <label name="bytecode_entry_label" text="Enter a bytecode:" row_column="13,1"></label>
     <entry name="bytecode_entry" width='30' row_column="13,2"/>
     <button name="btn_bytecode_entry" text="Receiving Bytecode" row_column="13,3"></button>
-    <canvas name="gui_map" background='lightgray' row_column="1,6"></canvas>
+    <label name="chat_with_robot_entry_label" row_column="14,1">
+        <text>Enter a sentence to chat: </text>
+    </label>
+    <entry name="chat_with_robot_entry" width='30' row_column="14,2"/>
+    <button name="btn_chat_with_robot_entry" text="Chat with Robot" row_column="14,3"></button>
+    <!-- <canvas name="gui_map" background='lightgray' row_column="1,6"></canvas> -->
 </root>
