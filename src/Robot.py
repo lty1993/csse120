@@ -289,7 +289,9 @@ class Robot(object):
         while _receive_bytecode_flag and (not received):
             group_list = []
             each_data_pre = []
-            for x in range(content_length):
+            x = -1
+            while x<content_length:
+                x += 1
                 each_data = self.__to_binary(self.__receive_bytecode(-1))
                 if each_data==[1, 1, 0, 1, 0, 0, 0, 0]:
                     binary_send = [0, 1, 0, 1, 0, 0, 0, 0]
@@ -300,6 +302,7 @@ class Robot(object):
                     self.connection.sendIR(self.__from_binary(binary_send))
                     if each_data!=each_data_pre:
                         group_list.append(self.__from_binary(each_data[1:]))
+                        x -= 1
                 each_data_pre = each_data
             group_done = self.__receive_bytecode(-1)
             verify_bytecode = self.__verify_bytecode(group_list)
