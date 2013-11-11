@@ -3,6 +3,7 @@ from threading import Timer, Thread
 from logger import robotLogger
 from job import Job
 from secure import RobotEncryption
+import eliza
 import time
 import math
 

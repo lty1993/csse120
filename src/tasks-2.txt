@@ -22,3 +22,4 @@ DATE-STARTED, DATE-DUE/ENDED.  DESCRIBE-TASK.  STATUS.  HOURS.
 11-10         11-10        IR protocol design  DONE     1.5
 11-10         11-10     IR protocol implement  DONE     2
 11-10         11-10            ft-8b           DONE     2
+11-10         11-10        upgrade eliza.py    DONE     1
