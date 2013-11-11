@@ -20,3 +20,11 @@ DATE-STARTED, DATE-DUE/ENDED.  DESCRIBE-TASK.  STATUS.  HOURS.
 11-6          11-6.          move in curves    DONE    .5
 11-7          11-7.         improve autonomous DONE     1
 11-4          11-7.            merge work      DONE     1
+
+map GUI, move around obstacles   1.5hr.. 1.5hr
+plays notes and dances
+opens webpage github.com computerhope.com
+
+add doc strings to each function or method
+
+LOOK AT GRADING RUBRIC

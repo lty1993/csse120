@@ -1,54 +1,54 @@
 <root>
     <button name="btn_connect" text="Connect" row_column="1,1"></button>
     <button name="btn_stop" text="Stop" row_column="1,2"></button>
-    <button name="btn_follow" text="Follow Black Line" row_column="2,2"></button>
+    <button name="btn_follow" text="Follow Black Line" row_column="1,3"></button>
     <button name="wilma_bio" text="WILMA's Bio" row_column="2,1"></button>
-    <button name="btn_forward" text="Forward" row_column="3,1"></button>
-    <button name="btn_backward" text="Backward"  row_column="3,2"></button>
-    <button name="btn_left" text="Left" row_column="4,1"></button>
-    <button name="btn_right" text="Right" row_column="4,2"></button>
-    <label name="speed_entry_label" row_column="5,1">
+    <button name="btn_forward" text="Forward" row_column="2,2"></button>
+    <button name="btn_backward" text="Backward"  row_column="2,3"></button>
+    <button name="btn_left" text="Left" row_column="3,1"></button>
+    <button name="btn_right" text="Right" row_column="3,2"></button>
+    <button name="btn_map_GUI" text ="Coordinate Grid" row_column="3,3"></button>
+    <label name="speed_entry_label" row_column="4,1">
         <text>Enter a speed: </text>
     </label>
-    <entry name="speed_entry" width='20' row_column="5,2"/>
-    <label name="rotation_entry_label" row_column="6,1">
+    <entry name="speed_entry" width='20' row_column="4,2"/>
+    <label name="rotation_entry_label" row_column="5,1">
         <text>Enter a rotational speed: </text>
     </label>
-    <entry name="rotation_entry" width='20' row_column="6,2"/>
-    <label name="time_entry_label" row_column="7,1">
+    <entry name="rotation_entry" width='20' row_column="5,2"/>
+    <label name="time_entry_label" row_column="6,1">
         <text>Enter a time: </text>
     </label>
-    <entry name="time_entry" width='20' row_column="7,2"/>
-    <button name="btn_move_autonomously" text="Move Autonomously" row_column="8,1"></button>
-    <button name="btn_go_forward_until_ir_signal" text="Go Forward Until IR Signal" row_column="8,2"></button>
-    <button name="btn_go_forward_until_stuck" text="Go Forward Until Stuck" row_column="8,3"></button>
-    <label name="de_en_code_message_entry_label" row_column="9,1">
+    <entry name="time_entry" width='20' row_column="6,2"/>
+    <button name="btn_move_autonomously" text="Move Autonomously" row_column="7,1"></button>
+    <button name="btn_go_forward_until_ir_signal" text="Go Forward Until IR Signal" row_column="7,2"></button>
+    <button name="btn_go_forward_until_stuck" text="Go Forward Until Stuck" row_column="7,3"></button>
+    <label name="de_en_code_message_entry_label" row_column="8,1">
         <text>Enter a message: </text>
     </label>
-    <entry name="de_en_code_message_entry" width='20' row_column="9,2"/>
-    <button name="btn_de_en_code_message" text="De/Encode a message" row_column="9,3"></button>
-    <label name="darkness_entry_label" row_column="10,1">
+    <entry name="de_en_code_message_entry" width='20' row_column="8,2"/>
+    <button name="btn_de_en_code_message" text="De/Encode a message" row_column="8,3"></button>
+    <label name="darkness_entry_label" row_column="9,1">
         <text>Enter a darkness: </text>
     </label>
-    <entry name="darkness_entry" width='30' row_column="10,2"/>
-    <button name="btn_go_forward_until_black_line" text="Go Forward Until Black Line" row_column="10,3"></button>
-    <label name="bumper_entry_label" row_column="11,1">
+    <entry name="darkness_entry" width='30' row_column="9,2"/>
+    <button name="btn_go_forward_until_black_line" text="Go Forward Until Black Line" row_column="9,3"></button>
+    <label name="bumper_entry_label" row_column="10,1">
         <text>Choose L/R bumper sensor: </text>
     </label>
-    <entry name="bumper_entry" width='30' row_column="11,2"/>
-    <button name="btn_go_forward_until_bumps" text="Go Forward Until Bumps" row_column="11,3"></button>
-    <label name="grid_entry_label" row_column="12,1">
+    <entry name="bumper_entry" width='30' row_column="10,2"/>
+    <button name="btn_go_forward_until_bumps" text="Go Forward Until Bumps" row_column="10,3"></button>
+    <label name="grid_entry_label" row_column="11,1">
         <text>Enter a list of x, y coordinates: </text>
     </label>
-    <entry name="grid_entry" width='30' row_column="12,2"/>
-    <button name="grid_button" text="Move to this coordinate" row_column="12,3"></button>
-    <label name="bytecode_entry_label" text="Enter a bytecode:" row_column="13,1"></label>
-    <entry name="bytecode_entry" width='30' row_column="13,2"/>
-    <button name="btn_bytecode_entry" text="Receiving Bytecode" row_column="13,3"></button>
-    <label name="chat_with_robot_entry_label" row_column="14,1">
+    <entry name="grid_entry" width='30' row_column="11,2"/>
+    <button name="grid_button" text="Move to this coordinate" row_column="11,3"></button>
+    <label name="bytecode_entry_label" text="Enter a bytecode:" row_column="12,1"></label>
+    <entry name="bytecode_entry" width='30' row_column="12,2"/>
+    <button name="btn_bytecode_entry" text="Receiving Bytecode" row_column="12,3"></button>
+    <label name="chat_with_robot_entry_label" row_column="13,1">
         <text>Enter a sentence to chat: </text>
     </label>
-    <entry name="chat_with_robot_entry" width='30' row_column="14,2"/>
-    <button name="btn_chat_with_robot_entry" text="Chat with Robot" row_column="14,3"></button>
-    <!-- <canvas name="gui_map" background='lightgray' row_column="1,6"></canvas> -->
+    <entry name="chat_with_robot_entry" width='30' row_column="13,2"/>
+    <button name="btn_chat_with_robot_entry" text="Chat with Robot" row_column="13,3"></button>
 </root>

@@ -6,6 +6,7 @@ from secure import RobotEncryption
 from eliza import eliza
 import time
 import math
+import map_GUI
 
 class Robot(object):
     """
@@ -30,7 +31,7 @@ class Robot(object):
         self._forward_until_black_line = False
         self._forward_until_bumps = False
         self._encode_message = False
-        self._teleportspeed = [0,0];
+        self._teleportspeed = [0, 0];
         self._forward_until_ir_signal = -1;
 
     def _job(self, function, args=None, kwargs=None, life_span=0):
@@ -116,7 +117,7 @@ class Robot(object):
         Contributor: Xiangqing Zhang.
         """
         # robotLogger.add("Terminating", "self.stop")
-        self._teleportspeed = [0,0]
+        self._teleportspeed = [0, 0]
         self._sendIR = False
         self._follow_line = False
         self._send_bytecode_flag = False
@@ -141,9 +142,21 @@ class Robot(object):
         Contributor: Matthew O'Brien
         """
         robotLogger.add("%d,%d,%d" % (speed, rotation, seconds), "move_autonomously")
-        self._job(self._move_autonomously, [speed, rotation], life_span=seconds)
-    def _move_autonomously(self, speed, rotation):
+        self._job(self._move_autonomously, [speed, rotation, seconds], life_span=seconds)
+    def _move_autonomously(self, speed, rotation, seconds):
+#         self.connection.go(speed, rotation) # Method 1
+        distance_sensor = our_create.Sensors.distance  # Method 2
+        self.connection.getSensor(distance_sensor)
         self.connection.go(speed, rotation)
+
+        total = 0
+        while True:
+            distance = self.connection.getSensor(distance_sensor)
+            total += abs(distance)
+            if total >= abs(speed * seconds):
+                break
+        self.connection.stop()
+        print(speed * seconds, total)
 
     def go_forward_until_black_line(self, speed, darkness=500):
         """
@@ -180,10 +193,10 @@ class Robot(object):
             left_bumper_state = sensor_values[3]
             right_bumper_state = sensor_values[4]
             if ("L" in bump_sensor) or ("l" in bump_sensor):
-                if left_bumper_state==1:
+                if left_bumper_state == 1:
                     break
             if ("R" in bump_sensor) or ("r" in bump_sensor):
-                if right_bumper_state==1:
+                if right_bumper_state == 1:
                     break
             time.sleep(0.05)
         self.stop()
@@ -464,6 +477,15 @@ class Robot(object):
             coordinates = [[0, 0]]
             for each_coordinate in coordinates_temp:
                 coordinates.append(each_coordinate.split(","))
+        elif type(coordinates) is list:
+            print(coordinates)
+            coordinates_temp = []
+            for k in range(len(coordinates) // 2):
+                coordinates_temp.append([coordinates[2 * k], coordinates[2 * k + 1]])
+
+            coordinates = coordinates_temp
+            print(coordinates)
+
         else:
             coordinates_temp = coordinates.split()
             coordinates = [[0, 0]]
@@ -563,20 +585,20 @@ class Robot(object):
             sensor_values = self.connection.getSensor(sensor)
             left_bumper_state = sensor_values[3]
             right_bumper_state = sensor_values[4]
-            if left_bumper_state==1 or right_bumper_state==1:
+            if left_bumper_state == 1 or right_bumper_state == 1:
                 total_time = 0
                 self._move_autonomously(speed, 45)
-                while self._forward_until_stuck and total_time<10:
+                while self._forward_until_stuck and total_time < 10:
                     time.sleep(0.05)
                     sensor_values = self.connection.getSensor(sensor)
                     left_bumper_state = sensor_values[3]
                     right_bumper_state = sensor_values[4]
-                    robotLogger.add("%d, %d"%(left_bumper_state, right_bumper_state), "_go_forward_until_stuck")
-                    if left_bumper_state==1 or right_bumper_state==1:
+                    robotLogger.add("%d, %d" % (left_bumper_state, right_bumper_state), "_go_forward_until_stuck")
+                    if left_bumper_state == 1 or right_bumper_state == 1:
                         total_time += 0.05
                     else:
                         break
-                if total_time>10: break
+                if total_time > 10: break
                 self._move_autonomously(speed, 0)
             time.sleep(0.05)
         self.stop()
@@ -639,7 +661,7 @@ class Robot(object):
             # robotLogger.add("%s"%self._follow_line, "_follow_black_line")
             temp1 = True;
             sensor_value = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])];
-            if (sensor_value[0]< darkness and sensor_value[1]<darkness and temp1) or (sensor_value[0] < darkness and temp1):
+            if (sensor_value[0] < darkness and sensor_value[1] < darkness and temp1) or (sensor_value[0] < darkness and temp1):
                 self.connection.stop();
                 self.connection.go(0, 180);
                 time.sleep(0.2);
