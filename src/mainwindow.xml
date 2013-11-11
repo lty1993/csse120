@@ -33,12 +33,12 @@
     <entry name="bumper_entry" width='30' row_column="10,2"/>
     <button name="btn_go_forward_until_bumps" text="Go Forward Until Bumps" row_column="10,3"></button>
     <label name="grid_entry_label" row_column="11,1">
-        <text>Enter a list of x, y coordinates: </text>
+        <text>Enter a list of x,y coordinates: </text>
     </label>
     <entry name="grid_entry" width='30' row_column="11,2"/>
     <button name="grid_button" text="Move to this coordinate" row_column="11,3"></button>
     <label name="bytecode_entry_label" text="Enter a bytecode:" row_column="12,1"></label>
     <entry name="bytecode_entry" width='30' row_column="12,2"/>
     <button name="btn_bytecode_entry" text="Receiving Bytecode" row_column="12,3"></button>
-    <canvas name="gui_map" background='lightgray' row_column="1,6"></canvas>
+    <button name="btn_map_GUI" text ="Coordinate Grid" row_column="13,1"></button>
 </root>

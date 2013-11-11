@@ -4,17 +4,19 @@ import tkinter
 from tkinter import ttk
 from logger import robotLogger
 from threading import Timer
+import map_GUI
 
 
 class Gui():
     def __init__(self, port="sim"):
         """
-        A gui used to autonomously control the robot with user-specified speed, rotation, and time.
+        A gui used to control the robot.
         Contributor: Matthew O'Brien, Xiangqing Zhang, Tianyu Liu
         """
         self.speed = None
         self.rotation = None
         self.time = None
+        self.distance = None
         self.robot = Robot(port)
         self.robot.connect()
 
@@ -70,6 +72,8 @@ class Gui():
         self.config_widget("btn_right", {"command": lambda: self.robot.teleport("Right")})
         self.config_widget("btn_follow", {"command": lambda: self.robot.follow_black_line(self.speed.get(), self.darkness.get())})
 
+        self.config_widget("btn_map_GUI", {"command": lambda: self.map_gui_to_robot()})
+
         self.log_frame = ttk.Frame(self.root)
         self.log_frame.grid()
         self.log_text = tkinter.Text(self.log_frame, width=150, height=20, wrap=tkinter.CHAR)  # state=tkinter.DISABLED)
@@ -81,6 +85,11 @@ class Gui():
         info_time = Timer(2, lambda: self.robot.team_info())
         info_time.start()
         self.root.mainloop()
+
+    def map_gui_to_robot(self):
+        points = map_GUI.main()
+        self.robot.grid_movement(points, self.speed.get(), self.rotation.get())
+
 
     def config_widget(self, widget_name, widget_options):
         """
@@ -147,7 +156,7 @@ class Gui():
         self.robot.disconnect()
 
 def main():
-    g = Gui(9)
+    g = Gui()
     g.exit()
 
 if __name__ == '__main__':
