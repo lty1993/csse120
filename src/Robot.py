@@ -22,6 +22,8 @@ class Robot(object):
         self.robotEncryption = RobotEncryption()
         self._send_bytecode_flag = False
         self._receive_bytecode_flag = False
+        self._take_other_robot_flag = False
+        self._follow_other_robot_flag = False
         self.__receive_bytecode_flag = False
         self._sendIR = False
         self._follow_line = False
@@ -120,6 +122,8 @@ class Robot(object):
         self._send_bytecode_flag = False
         self._receive_bytecode_flag = False
         self.__receive_bytecode_flag = False
+        self._take_other_robot_flag = False
+        self._follow_other_robot_flag = False
         self._forward_until_black_line = False
         self._forward_until_bumps = False
         self._forward_until_ir_signal = -1
@@ -670,6 +674,44 @@ class Robot(object):
     def _decode_code_message(self, message):
         bytecode_list = self._receive_bytecode()
         message.set(robotEncryption.decrypt(robotEncryption.fromIR(bytecode_list)))
+
+    def take_other_robot(self):
+        """
+        The robot that takes WILMA to go.
+        IR signal:
+            0 = Stop
+            Other = Go
+
+        Feature: 9-1
+        Contributor: Xiangqing Zhang
+        """
+        self._job(self._take_other_robot)
+    def _take_other_robot(self):
+        # TODO.
+        self._take_other_robot_flag = True
+        while self._take_other_robot_flag:
+            pass
+        self.stop()
+    def follow_other_robot(self):
+        """
+        WILMA follows another robot that is emitting an IR signal.
+        Notice: call self.take_other_robot() before self.follow_other_robot()!
+
+        Feature: 9-2
+        Contributor: Xiangqing Zhang
+        """
+        self._job(self._follow_other_robot)
+    def _follow_other_robot(self):
+        # TODO.
+        self._follow_other_robot_flag = True
+        sensor = our_create.Sensors.ir_byte
+        
+        while self._follow_other_robot_flag:
+            sensor_values = self.connection.getSensor(sensor)
+            if sensor_values == bytecode:
+                break
+            time.sleep(0.05)
+        self.stop()
 
     def chat_with_robot(self, message):
         """
