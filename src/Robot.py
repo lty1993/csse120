@@ -653,7 +653,7 @@ class Robot(object):
         Uses codes to send letters, words and entire phrases.
         Encrypts and decrypts (perhaps as simple as Caesar’s cipher,
         or as complicated as a public key encryption system).
-        
+
         Feature: 8b
         Contributor: Xiangqing Zhang
         """
@@ -676,6 +676,7 @@ class Robot(object):
         Feature: 12
         Contributor: Xiangqing Zhang
         """
+        robotLogger.add(message.get(), "You say:", "INFO")
         robotLogger.add(self.eliza.respond(message.get()), "Wilma says:", "INFO")
         message.set("")
 
