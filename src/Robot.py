@@ -2,10 +2,9 @@ import new_create as our_create
 from threading import Timer, Thread
 from logger import robotLogger
 from job import Job
-import random
+from secure import RobotEncryption
 import time
 import math
-
 
 class Robot(object):
     """
@@ -18,10 +17,15 @@ class Robot(object):
         self.connection = None
         self.port = port
         self.job = None
+        self.robotEncryption = RobotEncryption()
+        self._send_bytecode_flag = False
+        self._receive_bytecode_flag = False
+        self.__receive_bytecode_flag = False
         self._sendIR = False
         self._follow_line = False
         self._forward_until_black_line = False
         self._forward_until_bumps = False
+        self._encode_message = False
         self._teleportspeed = [0,0];
         self._forward_until_ir_signal = -1;
 
@@ -111,9 +115,13 @@ class Robot(object):
         self._teleportspeed = [0,0]
         self._sendIR = False
         self._follow_line = False
+        self._send_bytecode_flag = False
+        self._receive_bytecode_flag = False
+        self.__receive_bytecode_flag = False
         self._forward_until_black_line = False
         self._forward_until_bumps = False
         self._forward_until_ir_signal = -1
+        self._encode_message = False
         if self.job:
             Job.in_use = False
             self.job = None
@@ -174,7 +182,189 @@ class Robot(object):
             time.sleep(0.05)
         self.stop()
 
-    def chat_with_another_robot(self, bytecode):
+
+    def _send_bytecode(self, bytecode_list):
+        """
+        Send a list of bytecodes using IR sender.
+        ___ ___ ___ ___ ___ ___ ___ ___
+         a   b   c   d   e   f   g   h
+        a: 0 = Regular data; 1 = Special data
+        b: If a == 1:
+               0 = Content length;
+               1 = Other commands;
+        cdefgh: If a == 1 and b == 1:
+               0 = Send done.
+               1 = Group done.
+               2 = Ignore this. Used in sending same data twice or more.
+               3 = Illegal verify code.
+        Send a group of at max 63 bytecodes.
+        Contributor: Xiangqing Zhang
+        """
+        self._send_bytecode_flag = True
+        start = 0
+        while self._send_bytecode_flag and start<len(bytecode_list):
+            end = start + 63 # [start, end)
+            if end>len(bytecode_list): end = len(bytecode_list)
+            content_length = end - start
+            success = False
+            while self._send_bytecode_flag and (not success):
+                # Content length.
+                binary_send = [1, 0]
+                binary_send.extend(self.__to_binary(content_length, 6))
+                binary_expected = [0, 1, 0, 0, 0, 0, 0, 0]
+                self.connection.sendIR(self.__from_binary(binary_send))
+                while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
+                    self.connection.sendIR(self.__from_binary(binary_send))
+                # Content.
+                for x in range(start, end):
+                    if x>start and bytecode_list[x]==bytecode_list[x-1]:
+                        # Ignore this.
+                        binary_send = [1, 1, 0, 1, 0, 0, 0, 0]
+                        binary_expected = [0, 1, 0, 1, 0, 0, 0, 0]
+                        self.connection.sendIR(self.__from_binary(binary_send))
+                        while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
+                            self.connection.sendIR(self.__from_binary(binary_send))
+                    current_data = bytecode_list[x]
+                    binary_send = [0]
+                    binary_send.extend(self.__to_binary(current_data, 7))
+                    binary_expected = [1]
+                    binary_expected.extend(self.__to_binary(current_data, 7))
+                    self.connection.sendIR(self.__from_binary(binary_send))
+                    while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
+                        self.connection.sendIR(self.__from_binary(binary_send))
+                # Verify code.
+                verify_bytecode = self.__verify_bytecode(bytecode_list[start, end])
+                verify_binary = self.__to_binary(verify_bytecode, 6)
+                binary_expected = [0, 0]
+                binary_expected.extend(verify_binary)
+                binary_send = [1, 1, 1, 0, 0, 0, 0, 0]
+                self.connection.sendIR(self.__from_binary(binary_send))
+                bytecode_received = self.__receive_bytecode()
+                while self._send_bytecode_flag and bytecode_received==None:
+                    self.connection.sendIR(self.__from_binary(binary_send))
+                if binary_expected==self.__to_binary(bytecode_received):
+                    # Verify code legal.
+                    success = True
+                else:
+                    # Verify code illegal.
+                    binary_send = [1, 1, 1, 1, 0, 0, 0, 0]
+                    binary_expected = [0, 1, 1, 1, 0, 0, 0, 0]
+                    self.connection.sendIR(self.__from_binary(binary_send))
+                    while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
+                        self.connection.sendIR(self.__from_binary(binary_send))
+            start += 63
+        # Send done.
+        binary_send = [1, 1, 0, 0, 0, 0, 0, 0]
+        binary_expected = [0, 1, 1, 0, 0, 0, 0, 0]
+        self.connection.sendIR(self.__from_binary(binary_send))
+        while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
+            self.connection.sendIR(self.__from_binary(binary_send))
+    def _receive_bytecode():
+        """
+        Send a list of bytecodes using IR sender.
+        ___ ___ ___ ___ ___ ___ ___ ___
+         a   b   c   d   e   f   g   h
+        a: 1 = Confirm data; 0 = Special feedback
+        b: If a == 0:
+               0 = Verify code;
+               1 = Other status;
+        c: If a == 0 and b == 1:
+               0 = Content length received.
+               1 = Send done received.
+               2 = Ignore this received.
+               3 = Illegal verify code received.
+        If a == 1:
+            Other 7-bit should be the same as received.
+        Send a group of at max 63 bytecodes.
+        Notice: Always start self._receive_bytecode() before self._send_bytecode()!
+        Contributor: Xiangqing Zhang
+        """
+        self._receive_bytecode_flag = True
+        received_list = []
+        received = False
+        content_length = self.__from_binary(self.__receive_bytecode(-1)[2:])
+        self.connection.sendIR([0, 1, 0, 0, 0, 0, 0, 0])
+        while _receive_bytecode_flag and (not received):
+            group_list = []
+            each_data_pre = []
+            for x in range(content_length):
+                each_data = self.__to_binary(self.__receive_bytecode(-1))
+                if each_data==[1, 1, 0, 1, 0, 0, 0, 0]:
+                    binary_send = [0, 1, 0, 1, 0, 0, 0, 0]
+                    self.connection.sendIR(self.__from_binary(binary_send))
+                else:
+                    binary_send = [1]
+                    binary_send.extend(each_data[1:])
+                    self.connection.sendIR(self.__from_binary(binary_send))
+                    if each_data!=each_data_pre:
+                        group_list.append(self.__from_binary(each_data[1:]))
+                each_data_pre = each_data
+            group_done = self.__receive_bytecode(-1)
+            verify_bytecode = self.__verify_bytecode(group_list)
+            verify_binary = [0, 0]
+            verify_binary.extend(self.__to_binary(verify_bytecode))
+            self.connection.sendIR(self.__from_binary(binary_send))
+            verify_result = self.__to_binary(self.__receive_bytecode(-1))
+            if verify_result==[1, 1, 1, 1, 0, 0, 0, 0]:
+                binary_send = [0, 1, 1, 1, 0, 0, 0, 0]
+                self.connection.sendIR(self.__from_binary(binary_send))
+                group_list = []
+            else:
+                if verify_result==[1, 1, 0, 0, 0, 0, 0, 0]:
+                    binary_send = [0, 1, 1, 0, 0, 0, 0, 0]
+                    self.connection.sendIR(self.__from_binary(binary_send))
+                    received = True
+                else:
+                    content_length = self.__from_binary(verify_result[2:])
+                    self.connection.sendIR([0, 1, 0, 0, 0, 0, 0, 0])
+            received_list.extend(group_list)
+    return received_list
+    def __receive_bytecode(self, wait_cycles=10):
+        """
+        Wait until bytecode received. Will abort after wait_cycles.
+        If wait_cycles==-1, it will wait forever until self.stop().
+        Contributor: Xiangqing Zhang
+        """
+        self.__receive_bytecode_flag = True
+        sensor = our_create.Sensors.ir_byte
+        k = 0
+        while self.__receive_bytecode_flag and (wait_cycles==-1 or k<wait_cycles):
+            sensor_values = self.connection.getSensor(sensor)
+            robotLogger.add("bytecode: %d" % sensor_values, "__receive_bytecode")
+            if sensor_values != 255: return sensor_values
+            time.sleep(0.05)
+            k += 1
+        return None
+    def __verify_bytecode(self, bytecode_list):
+        """
+        Verify the data by multiplying all the bytecodes and mod by 63.
+        Contributor: Xiangqing Zhang
+        """
+        t = 1
+        for eachData in bytecode_list:
+            t *= eachData
+        return t % 63
+    def __from_binary(self, binary):
+        """
+        Converts and returns binary to bytecode.
+        Contributor: Xiangqing Zhang
+        """
+        return sum([binary[k]*(2**k) for k in range(len(binary))])
+    def __to_binary(self, bytecode, bytecode_length=8):
+        """
+        Converts and returns bytecode to binary.
+        Contributor: Xiangqing Zhang
+        """
+        if bytecode==None: return None
+        result = [0 for k in range(bytecode_length)]
+        k = 0
+        while bytecode>0:
+            result[k] = bytecode % 2
+            bytecode //= 2
+            k += 1
+        return result
+
+    def chat_with_another_robot(self, bytecode_string):
         """
         User can make WILMA start/stop emitting a user-specified IR signal.
         WILMA displays whatever IR signal it is currently hearing.
@@ -185,25 +375,28 @@ class Robot(object):
         Contributor: Xiangqing Zhang
         """
         # TODO: Test in the REAL robot!
-        self._job(self._chat_with_another_robot, [bytecode])
-    def _chat_with_another_robot(self, bytecode):
-        self._sendIR = True
-        sensor = our_create.Sensors.ir_byte
-        while self._sendIR:
-            t = Timer(0.1, lambda: self.connection.sendIR(bytecode))
-            t.start()
-            # self.connection.sendIR(bytecode)
-            while self._sendIR:
-                sensor_values = self.connection.getSensor(sensor)
-                robotLogger.add("bytecode: %d" % sensor_values, "_chat_with_another_robot")
-                if sensor_values != 255:
-                    break
-                time.sleep(0.05)
-            temp_bytecode = random.randint(0, 255)
-            while temp_bytecode == bytecode:
-                temp_bytecode = random.randint(0, 255)
-            bytecode = temp_bytecode
-        t.cancel()
+        self._job(self._chat_with_another_robot, [bytecode_string.split(",")])
+    def _chat_with_another_robot(self, bytecode_list):
+        self._send_bytecode(bytecode_list)
+        # self._sendIR = True
+        # sensor = our_create.Sensors.ir_byte
+        # k = 0
+        # while self._sendIR and k<len(bytecode_list):
+        #     bytecode = bytecode_list[k]
+        #     t = Timer(0.1, lambda: self.connection.sendIR(bytecode))
+        #     t.start()
+        #     # self.connection.sendIR(bytecode)
+        #     while self._sendIR:
+        #         sensor_values = self.connection.getSensor(sensor)
+        #         robotLogger.add("bytecode: %d" % sensor_values, "_chat_with_another_robot")
+        #         if sensor_values != 255:
+        #             break
+        #         time.sleep(0.05)
+        #     k += 1
+        # t.cancel()
+        self.stop()
+
+
     def follow_with_black_line(self):
         self._job(self._follow_with_black_line);
     def _follow_with_black_line(self):
@@ -452,6 +645,26 @@ class Robot(object):
             if temp1:
                 self.connection.go(speed, 0);
         self.stop()
+
+    def de_en_code_message(self, message):
+        """
+        Uses codes to send letters, words and entire phrases.
+        Encrypts and decrypts (perhaps as simple as Caesar’s cipher,
+        or as complicated as a public key encryption system).
+        
+        Feature: 8b
+        Contributor: Xiangqing Zhang
+        """
+        if message.get():
+            self._job(self._encode_code_message(), [message.get()])
+        else:
+            self._job(self._decode_code_message(), [message])
+    def _encode_code_message(self, message):
+        self._encode_message = True
+        self._send_bytecode(self.robotEncryption.toIR(self.RobotEncryption.encrypt(message)))
+    def _decode_code_message(self, message):
+        bytecode_list = self._receive_bytecode()
+        message["text"] = robotEncryption.decrypt(robotEncryption.fromIR(bytecode_list))
 
     def __repr__(self):
         """

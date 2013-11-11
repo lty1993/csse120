@@ -22,23 +22,28 @@
     <button name="btn_move_autonomously" text="Move Autonomously" row_column="8,1"></button>
     <button name="btn_go_forward_until_ir_signal" text="Go Forward Until IR Signal" row_column="8,2"></button>
     <button name="btn_go_forward_until_stuck" text="Go Forward Until Stuck" row_column="8,3"></button>
-    <label name="darkness_entry_label" row_column="9,1">
+    <label name="de_en_code_message_entry_label" row_column="9,1">
+        <text>Enter a message: </text>
+    </label>
+    <entry name="de_en_code_message_entry" width='20' row_column="9,2"/>
+    <button name="btn_de_en_code_message" text="De/Encode a message" row_column="9,3"></button>
+    <label name="darkness_entry_label" row_column="10,1">
         <text>Enter a darkness: </text>
     </label>
-    <entry name="darkness_entry" width='30' row_column="9,2"/>
-    <button name="btn_go_forward_until_black_line" text="Go Forward Until Black Line" row_column="9,3"></button>
-    <label name="bumper_entry_label" row_column="10,1">
+    <entry name="darkness_entry" width='30' row_column="10,2"/>
+    <button name="btn_go_forward_until_black_line" text="Go Forward Until Black Line" row_column="10,3"></button>
+    <label name="bumper_entry_label" row_column="11,1">
         <text>Choose L/R bumper sensor: </text>
     </label>
-    <entry name="bumper_entry" width='30' row_column="10,2"/>
-    <button name="btn_go_forward_until_bumps" text="Go Forward Until Bumps" row_column="10,3"></button>
-    <label name="grid_entry_label" row_column="11,1">
+    <entry name="bumper_entry" width='30' row_column="11,2"/>
+    <button name="btn_go_forward_until_bumps" text="Go Forward Until Bumps" row_column="11,3"></button>
+    <label name="grid_entry_label" row_column="12,1">
         <text>Enter a list of x, y coordinates: </text>
     </label>
-    <entry name="grid_entry" width='30' row_column="11,2"/>
-    <button name="grid_button" text="Move to this coordinate" row_column="11,3"></button>
-    <label name="bytecode_entry_label" text="Enter a bytecode:" row_column="12,1"></label>
-    <entry name="bytecode_entry" width='30' row_column="12,2"/>
-    <button name="btn_bytecode_entry" text="Receiving Bytecode" row_column="12,3"></button>
+    <entry name="grid_entry" width='30' row_column="12,2"/>
+    <button name="grid_button" text="Move to this coordinate" row_column="12,3"></button>
+    <label name="bytecode_entry_label" text="Enter a bytecode:" row_column="13,1"></label>
+    <entry name="bytecode_entry" width='30' row_column="13,2"/>
+    <button name="btn_bytecode_entry" text="Receiving Bytecode" row_column="13,3"></button>
     <canvas name="gui_map" background='lightgray' row_column="1,6"></canvas>
 </root>

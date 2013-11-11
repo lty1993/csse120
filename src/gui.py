@@ -47,9 +47,12 @@ class Gui():
         self.config_widget("grid_entry", {"textvariable": self.coordinates})
         self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.coordinates.get(), self.speed.get(), self.rotation.get())})
 
+        self.message = tkinter.IntVar()
+        self.config_widget("de_en_code_message_entry", {"textvariable": self.message})
+        self.config_widget("btn_de_en_code_message", {"command": lambda: self.robot.btn_de_en_code_message(self.message)})
+
         self.darkness = tkinter.IntVar()
         self.config_widget("darkness_entry", {"textvariable": self.darkness})
-
         self.config_widget("btn_go_forward_until_black_line", {"command": lambda: self.robot.go_forward_until_black_line(self.speed.get(), self.darkness.get())})
 
         self.bumper = tkinter.StringVar()
@@ -147,7 +150,7 @@ class Gui():
         self.robot.disconnect()
 
 def main():
-    g = Gui(9)
+    g = Gui()
     g.exit()
 
 if __name__ == '__main__':
