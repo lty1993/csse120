@@ -5,6 +5,7 @@ from job import Job
 from secure import RobotEncryption
 from eliza import eliza
 import time
+import random
 import math
 import map_GUI
 
@@ -697,41 +698,82 @@ class Robot(object):
         bytecode_list = self._receive_bytecode()
         message.set(robotEncryption.decrypt(robotEncryption.fromIR(bytecode_list)))
 
-    def take_other_robot(self):
+    def take_other_robot(self, speed, bytecode):
         """
         The robot that takes WILMA to go.
         IR signal:
             0 = Stop
-            Other = Go
+            1 = Turn Left
+            2 = Turn Right
+            Bytecode Specified = Go
 
         Feature: 9-1
         Contributor: Xiangqing Zhang
         """
-        self._job(self._take_other_robot)
-    def _take_other_robot(self):
-        # TODO.
+        self._job(self._take_other_robot, [speed, bytecode])
+    def _take_other_robot(self, speed, bytecode):
         self._take_other_robot_flag = True
+        robot.connection.go(speed, 0)
+        sensor = our_create.Sensors.ir_byte
+        sensor_distance = our_create.Sensors.distance
+        is_discovered = False
         while self._take_other_robot_flag:
-            pass
+            self.connection.sendIR(bytecode)
+            sensor_values = self.connection.getSensor(sensor)
+            if sensor_values == bytecode:
+                # Being discovered!
+                is_discovered = True
+                direction = random.randint(0, 1)
+                if direction == 0: direction = -1
+                if direction == 0:
+                    bytecode_direction = 1
+                else:
+                    bytecode_direction = 2
+                rotation = random.randint(20, 40) * direction
+                seconds = random.randint(5)
+
+                distance_moved = 0
+                distance = distance * seconds * 10
+                self.connection.getSensor(sensor_distance)
+                robot.connection.go(speed, rotation)
+                while distance_moved < distance:
+                    self.connection.sendIR(bytecode_direction)
+                    time.sleep(0.05)
+            elif is_discovered:
+                is_discovered = False
+                self.connection.go(speed, 0)
+            time.sleep(0.05)
         self.stop()
-    def follow_other_robot(self):
+    def follow_other_robot(self, speed, bytecode):
         """
         WILMA follows another robot that is emitting an IR signal.
         Notice: call self.take_other_robot() before self.follow_other_robot()!
+        IR signal:
+            Bytecode Specified = Got you!
 
         Feature: 9-2
         Contributor: Xiangqing Zhang
         """
-        self._job(self._follow_other_robot)
-    def _follow_other_robot(self):
-        # TODO.
+        self._job(self._follow_other_robot, [speed, bytecode])
+    def _follow_other_robot(self, speed, bytecode):
         self._follow_other_robot_flag = True
         sensor = our_create.Sensors.ir_byte
-        
+        self.connection.go(speed, 0)
+        anticipated_direction = "LEFT"
         while self._follow_other_robot_flag:
             sensor_values = self.connection.getSensor(sensor)
             if sensor_values == bytecode:
-                break
+                self.connection.sendIR(bytecode)
+            elif sensor_values == 1:
+                anticipated_direction = "LEFT"
+            elif sensor_values == 2:
+                anticipated_direction = "RIGHT"
+            else:
+                rotation = 30
+                if anticipated_direction=="RIGHT": rotation *= -1
+                self.connection.go(speed, rotation)
+                while self.connection.getSensor(sensor) != bytecode:
+                    self.connection.go(speed, rotation)
             time.sleep(0.05)
         self.stop()
 
