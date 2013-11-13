@@ -51,4 +51,6 @@
     </label>
     <entry name="chat_with_robot_entry" width='30' row_column="13,2"/>
     <button name="btn_chat_with_robot_entry" text="Chat with Robot" row_column="13,3"></button>
+    <button name="btn_follow_other_robot" text="Follow Other Robot" row_column="14,1"></button>
+    <button name="btn_take_other_robot" text="Take Other Robot" row_column="14,2"></button>
 </root>
