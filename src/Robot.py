@@ -223,6 +223,7 @@ class Robot(object):
         """
         self._send_bytecode_flag = True
         start = 0
+        robotLogger.add(bytecode_list, "_send_bytecode")
         while self._send_bytecode_flag and start<len(bytecode_list):
             end = start + 63 # [start, end)
             if end>len(bytecode_list): end = len(bytecode_list)
@@ -354,7 +355,7 @@ class Robot(object):
         k = 0
         while self.__receive_bytecode_flag and (wait_cycles==-1 or k<wait_cycles):
             sensor_values = self.connection.getSensor(sensor)
-            robotLogger.add("bytecode: %d" % sensor_values, "__receive_bytecode")
+            robotLogger.add("bytecode: %d; binary: %s" % (sensor_values, self.__to_binary(sensor_values)), "__receive_bytecode")
             if sensor_values != 255: return sensor_values
             time.sleep(0.05)
             k += 1
@@ -697,7 +698,7 @@ class Robot(object):
         self._send_bytecode(self.robotEncryption.toIR(self.robotEncryption.encrypt(message)))
     def _decode_code_message(self, message):
         bytecode_list = self._receive_bytecode()
-        message.set(robotEncryption.decrypt(robotEncryption.fromIR(bytecode_list)))
+        message.set(self.robotEncryption.decrypt(self.robotEncryption.fromIR(bytecode_list)))
 
     def take_other_robot(self, speed, bytecode):
         """
