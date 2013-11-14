@@ -1,0 +1,65 @@
+For each Sprint, list the FEATURES planned for that Sprint,
+per this TEMPLATE:
+DESCRIBE-FEATURE.  OWNER.  STATUS-AT-END-OF-SPRINT.
+
+------------------------------------------------------------------------
+Sprint 1:
+DESCRIBE-FEATURE.  OWNER.  STATUS-AT-END-OF-SPRINT.
+1a. Display names & Sprint 1 hour worked. Matthew O’Brien. DONE
+1b. Wilma bio. Matthew O’Brien. DONE
+3a. forward, backward, spin, change speed. Tianyu Liu. DONE
+4a. forward, backward, spin. Matthew O’Brien. DONE
+5a. forward until darkness. Xiangqing Zhang. DONE
+7a. follow Cartesian coordinates. Matthew O’Brien. DONE
+8a. sends and receives IR messages. Xiangqing Zhang. DONE
+------------------------------------------------------------------------
+Sprint 2:
+DESCRIBE-FEATURE.  OWNER.  STATUS-AT-END-OF-SPRINT.
+1a. TEAM
+3b. Tianyu Liu
+4b. Matthew O'Brien
+5b. Xiangqing Zhang
+6a. Tianyu Liu
+6b. Tianyu Liu
+7b. Matthew O’Brien
+8b. Xiangqing Zhang
+(In progress)
+------------------------------------------------------------------------
+Sprint 3:
+DESCRIBE-FEATURE.  OWNER.  STATUS-AT-END-OF-SPRINT.
+
+
+------------------------------------------------------------------------
+1.	WILMA logs her information, that is, the program displays, for each of you:
+a.	Basic:  Your name and your task-list-reported hours for each sprint.  The task-list-reported hours must be updated at EACH sprint!
+b.	Advanced:  A short fictitious bio whose data is in a file (not hard-coded into the program).
+2.	WILMA uses a nice Graphical User Inteface (GUI).
+a.	Basic:  Buttons and Entry boxes, placed reasonably.
+b.	Advanced:  Demonstrates mastery of other GUI widgets (the more different kinds of widgets, the better).  Follows good GUI design principles (and you can explain how your GUI does so).
+3.	WILMA can be teleoperated.
+a.	Basic:  User can move WILMA forward and backward, spin WILMA left and right.  User can change speed during teleoperation.
+b.	Advanced:  Can do curves.  Uses easy-to-operate interfaces like keys (without interfering with other features!), gamepads, wiimotes, or other remote-control devices (perhaps wireless).
+4.	WILMA can move autonomously, by going a specified amount in a specified direction at a specified speed.
+a.	Basic:  Forward/backward, spin left/right.  Reasonable units and accuracy.
+b.	Advanced:  Multiple implementations, with demonstrated understanding of when and why one is better/worse than another.  High accuracy for the best implementations.  Can move in curves.
+5.	WILMA can move autonomously, by going until an event occurs, as follows:
+a.	Basic:  Go forward at user-specified speed until WILMA reaches a black line, where the user specifies the “darkness” of the line.  Go forward at user-specified speed until WILMA bumps into something, where the user specifies whether to use the left bump sensor, the right bump sensor, or both.
+b.	Advanced:  Go forward at user-specified speed until WILMA hears a user-specified IR signal.  User can generate a user-specified signal while doing so (modifying it while moving, perhaps).  Go forward until it is “stuck” (still trying to move), no matter what the direction (not just forward).
+6.	WILMA can follow a black line and possibly a wall:
+a.	Basic:  Implements at least the P of PID control to follow a curvy black line about 2 inches wide, with reasonably gentle curves, using the left front signal (for the left wheel speed) and the right front signal (for the right wheel speed).  (You can also use other sensors if you wish.)  The P constants are tuned reasonably.  Auto-calibrates the darkness of the lines under current lighting conditions by the human placing WILMA in positions as desired (with no changes to the program needed for this process).
+b.	Advanced:  The I and D are implemented (but possibly not tuned perfectly, as that may be hard).  The user can set all the parameters at run-time, ideally even while the robot is doing line-following.  Uses additional sensors.  Can follow a wall, using “bump and bounce” and perhaps also PID.  Performs wall-following as well or better than the demo.
+7.	WILMA can move to user-specified waypoints.
+a.	Basic:  User enters a short list of (x, y) coordinates.  Robot moves to each, one after the other.
+b.	Advanced:  The robot can move around obstacles as it does so.  There is a nice way to enter coordinates (e.g. by clicking on a map).  Coordinates come from a file.  User can control speeds as well (perhaps via pre-specification, perhaps via teleoperation, perhaps both).  The robot remembers paths that it is teleoperated and then can reproduce the paths autonomously.
+8.	WILMA can chat with another robot via IR.
+a.	Basic:  User can make WILMA start/stop emitting a user-specified IR signal.  WILMA displays whatever IR signal it is currently hearing.  WILMA can “chat” via user-specified IR numbers sent synchronously:  WILMA starts sending, then listens until it hears something from the other robot, then starts sending something different, then listens until it hears something from the other robot, etc.  You can assume that the other robot never sends back immediately the same number WILMA just sent, that no robot sends the same IR signal twice in a row, and any other simplifying assumptions that are required (ask your instructor about any such assumptions as needed).
+b.	Advanced:  Uses codes to send letters, words and entire phrases.  Encrypts and decrypts (perhaps as simple as Caesar’s cipher, or as complicated as a public key encryption system).  Can use a file-specified encoding system.  Communicates asynchronously, or uses more advanced protocols than the basic (either standard ones sort of like TCPIP or ones that you develop yourself).  Does handshaking to identify itself.
+9.	WILMA follows another robot that is emitting an IR signal.  Uses the “caps” for directionality, or the other robot sends codes to indicate directionality, or …
+10.	WILMA sings and dances with a light show.  Songs of more than 16 notes.  Plays MIDI from a file.  Composes songs – randomly, or with principles from music theory.  Likewise for dances and/or light shows.  Does the light show while dancing and singing, perhaps choreographed.
+11.	WILMA does interesting things with external motors, servos and/or sensors:  moving something, shooting something, sensing something, or …
+12.	WILMA offers Rogerian psychotherapy, ala Eliza (http://en.wikipedia.org/wiki/ELIZA).
+13.	WILMA uses swarm techniques and/or distributed algorithms to accomplish interesting things.
+14.	WILMA uses parallel algorithms (in processes and/or threads, in a single processor or across cores) to accomplish interesting things.
+15.	WILMA does interesting things with computer vision:  e.g. finding objects, using using semaphores to communicate, or … [Note: this item requires figuring out how to connect the camera to the robot.]
+16.	WILMA uses files or internet communication to do interesting things beyond that described above.
+17.	WILMA … [You suggest something interesting!]
