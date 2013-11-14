@@ -359,7 +359,7 @@ class Robot(object):
             sensor_values = self.connection.getSensor(sensor)
             robotLogger.add("bytecode: %d; binary: %s" % (sensor_values, self.__to_binary(sensor_values)), "__receive_bytecode")
             if sensor_values != 255: return sensor_values
-            time.sleep(0.05)
+            time.sleep(self.ir_time)
             k += 1
         return None
     def __verify_bytecode(self, bytecode_list):

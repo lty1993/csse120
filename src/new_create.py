@@ -4,7 +4,7 @@ originally designed by Zach Dodds at Harvey Mudd.
 
 Revisions by David Mutchler, March 2013.
 """
-
+import time
 class Sensors():
     distance = 'DISTANCE'
     angle = 'ANGLE'
@@ -888,6 +888,7 @@ class Create:
     def sendIR(self, byteValue):
         ''' send the requested byte out of low side driver 1 (pin 23 on Cargo Bay Connector) (0-255) '''
         self.__sendmsg(COMMANDS["SEND_IR"], chr(byteValue))
+        time.sleep(0.1)
     def startIR(self, byteValue):
         '''TODO: implement script send to begin sending passed value'''
         """Uses a script so that the robot can receive and perform other 
