@@ -34,6 +34,7 @@ class Robot(object):
         self._encode_message = False
         self._teleportspeed = [0, 0];
         self._forward_until_ir_signal = -1;
+        self.ir_time = 0.1
 
     def _job(self, function, args=None, kwargs=None, life_span=0):
         """
