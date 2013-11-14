@@ -223,9 +223,9 @@ class Robot(object):
         """
         self._send_bytecode_flag = True
         start = 0
-        while self._send_bytecode_flag and start<len(bytecode_list):
-            end = start + 63 # [start, end)
-            if end>len(bytecode_list): end = len(bytecode_list)
+        while self._send_bytecode_flag and start < len(bytecode_list):
+            end = start + 63  # [start, end)
+            if end > len(bytecode_list): end = len(bytecode_list)
             content_length = end - start
             success = False
             while self._send_bytecode_flag and (not success):
@@ -234,16 +234,16 @@ class Robot(object):
                 binary_send.extend(self.__to_binary(content_length, 6))
                 binary_expected = [0, 1, 0, 0, 0, 0, 0, 0]
                 self.connection.sendIR(self.__from_binary(binary_send))
-                while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
+                while self._send_bytecode_flag and binary_expected != self.__to_binary(self.__receive_bytecode()):
                     self.connection.sendIR(self.__from_binary(binary_send))
                 # Content.
                 for x in range(start, end):
-                    if x>start and bytecode_list[x]==bytecode_list[x-1]:
+                    if x > start and bytecode_list[x] == bytecode_list[x - 1]:
                         # Ignore this.
                         binary_send = [1, 1, 0, 1, 0, 0, 0, 0]
                         binary_expected = [0, 1, 0, 1, 0, 0, 0, 0]
                         self.connection.sendIR(self.__from_binary(binary_send))
-                        while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
+                        while self._send_bytecode_flag and binary_expected != self.__to_binary(self.__receive_bytecode()):
                             self.connection.sendIR(self.__from_binary(binary_send))
                     current_data = bytecode_list[x]
                     binary_send = [0]
@@ -251,7 +251,7 @@ class Robot(object):
                     binary_expected = [1]
                     binary_expected.extend(self.__to_binary(current_data, 7))
                     self.connection.sendIR(self.__from_binary(binary_send))
-                    while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
+                    while self._send_bytecode_flag and binary_expected != self.__to_binary(self.__receive_bytecode()):
                         self.connection.sendIR(self.__from_binary(binary_send))
                 # Verify code.
                 verify_bytecode = self.__verify_bytecode(bytecode_list[start, end])
@@ -261,9 +261,9 @@ class Robot(object):
                 binary_send = [1, 1, 1, 0, 0, 0, 0, 0]
                 self.connection.sendIR(self.__from_binary(binary_send))
                 bytecode_received = self.__receive_bytecode()
-                while self._send_bytecode_flag and bytecode_received==None:
+                while self._send_bytecode_flag and bytecode_received == None:
                     self.connection.sendIR(self.__from_binary(binary_send))
-                if binary_expected==self.__to_binary(bytecode_received):
+                if binary_expected == self.__to_binary(bytecode_received):
                     # Verify code legal.
                     success = True
                 else:
@@ -271,14 +271,14 @@ class Robot(object):
                     binary_send = [1, 1, 1, 1, 0, 0, 0, 0]
                     binary_expected = [0, 1, 1, 1, 0, 0, 0, 0]
                     self.connection.sendIR(self.__from_binary(binary_send))
-                    while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
+                    while self._send_bytecode_flag and binary_expected != self.__to_binary(self.__receive_bytecode()):
                         self.connection.sendIR(self.__from_binary(binary_send))
             start += 63
         # Send done.
         binary_send = [1, 1, 0, 0, 0, 0, 0, 0]
         binary_expected = [0, 1, 1, 0, 0, 0, 0, 0]
         self.connection.sendIR(self.__from_binary(binary_send))
-        while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
+        while self._send_bytecode_flag and binary_expected != self.__to_binary(self.__receive_bytecode()):
             self.connection.sendIR(self.__from_binary(binary_send))
     def _receive_bytecode():
         """
@@ -309,17 +309,17 @@ class Robot(object):
             group_list = []
             each_data_pre = []
             x = -1
-            while x<content_length:
+            while x < content_length:
                 x += 1
                 each_data = self.__to_binary(self.__receive_bytecode(-1))
-                if each_data==[1, 1, 0, 1, 0, 0, 0, 0]:
+                if each_data == [1, 1, 0, 1, 0, 0, 0, 0]:
                     binary_send = [0, 1, 0, 1, 0, 0, 0, 0]
                     self.connection.sendIR(self.__from_binary(binary_send))
                 else:
                     binary_send = [1]
                     binary_send.extend(each_data[1:])
                     self.connection.sendIR(self.__from_binary(binary_send))
-                    if each_data!=each_data_pre:
+                    if each_data != each_data_pre:
                         group_list.append(self.__from_binary(each_data[1:]))
                         x -= 1
                 each_data_pre = each_data
@@ -329,12 +329,12 @@ class Robot(object):
             verify_binary.extend(self.__to_binary(verify_bytecode))
             self.connection.sendIR(self.__from_binary(binary_send))
             verify_result = self.__to_binary(self.__receive_bytecode(-1))
-            if verify_result==[1, 1, 1, 1, 0, 0, 0, 0]:
+            if verify_result == [1, 1, 1, 1, 0, 0, 0, 0]:
                 binary_send = [0, 1, 1, 1, 0, 0, 0, 0]
                 self.connection.sendIR(self.__from_binary(binary_send))
                 group_list = []
             else:
-                if verify_result==[1, 1, 0, 0, 0, 0, 0, 0]:
+                if verify_result == [1, 1, 0, 0, 0, 0, 0, 0]:
                     binary_send = [0, 1, 1, 0, 0, 0, 0, 0]
                     self.connection.sendIR(self.__from_binary(binary_send))
                     received = True
@@ -352,7 +352,7 @@ class Robot(object):
         self.__receive_bytecode_flag = True
         sensor = our_create.Sensors.ir_byte
         k = 0
-        while self.__receive_bytecode_flag and (wait_cycles==-1 or k<wait_cycles):
+        while self.__receive_bytecode_flag and (wait_cycles == -1 or k < wait_cycles):
             sensor_values = self.connection.getSensor(sensor)
             robotLogger.add("bytecode: %d" % sensor_values, "__receive_bytecode")
             if sensor_values != 255: return sensor_values
@@ -373,16 +373,16 @@ class Robot(object):
         Converts and returns binary to bytecode.
         Contributor: Xiangqing Zhang
         """
-        return sum([binary[k]*(2**k) for k in range(len(binary))])
+        return sum([binary[k] * (2 ** k) for k in range(len(binary))])
     def __to_binary(self, bytecode, bytecode_length=8):
         """
         Converts and returns bytecode to binary.
         Contributor: Xiangqing Zhang
         """
-        if bytecode==None: return None
+        if bytecode == None: return None
         result = [0 for k in range(bytecode_length)]
         k = 0
-        while bytecode>0:
+        while bytecode > 0:
             result[k] = bytecode % 2
             bytecode //= 2
             k += 1
@@ -771,7 +771,7 @@ class Robot(object):
                 anticipated_direction = "RIGHT"
             else:
                 rotation = 30
-                if anticipated_direction=="RIGHT": rotation *= -1
+                if anticipated_direction == "RIGHT": rotation *= -1
                 self.connection.go(speed, rotation)
                 while self.connection.getSensor(sensor) != bytecode:
                     self.connection.go(speed, rotation)
@@ -798,89 +798,10 @@ class Robot(object):
         """
         self._job(self._sing_and_dance);
     def _sing_and_dance(self):
-        self.connection.go(50, 0)
-        time.sleep(1)
-        self.connection.go(0, 180)
-        time.sleep(1)
-        self.connection.go(30, 40)
-        time.sleep(1)
-        self.connection.go(30, -40)
-        time.sleep(1.3)
-        self.connection.go(0, 180)
-        time.sleep(1.2)
-        self.connection.go(30, 40)
-        time.sleep(1.2)
-        self.connection.go(30, -40)
-        time.sleep(1.3)
-        self.connection.go(-30, -40)
-        time.sleep(1.2)
-        self.connection.go(0, 180)
-        time.sleep(0.3)
-        self.connection.go(0, -180)
-        time.sleep(0.3)
-        self.connection.go(-30, 40)
-        time.sleep(1.2)
-        self.connection.go(40, 0)
-        time.sleep(1.2)
-        self.connection.go(-30, 0)
-        time.sleep(.3)
-        self.connection.go(30, 0)
-        time.sleep(.3)
-        self.connection.go(50, 130)
-        time.sleep(2)
-        self.connection.go(0, 180)
-        time.sleep(1.2)
-        self.connection.go(0, -180)
-        time.sleep(1.2)
-        self.connection.go(-30, 0)
-        time.sleep(0.8)
-        self.connection.go(25, 50)
-        time.sleep(1.2)
-        self.connection.go(50, 50)
-        time.sleep(1.2)
-        self.connection.go(25, 50)
-        time.sleep(1.2)
-        self.connection.go(50, 50)
-        time.sleep(1.1)
-        self.connection.go(0, 220)
-        time.sleep(1.8)
-        self.connection.go(-30, 0)
-        time.sleep(.2)
-        self.connection.go(30, 0)
-        time.sleep(.2)
-        self.connection.go(-30, 0)
-        time.sleep(.2)
-        self.connection.go(30, 0)
-        time.sleep(.2)
-        self.connection.go(-30, 0)
-        time.sleep(.2)
-        self.connection.go(30, 0)
-        time.sleep(.2)
-        self.connection.go(-30, 0)
-        time.sleep(.2)
-        self.connection.go(30, 0)
-        time.sleep(.2)
-        self.connection.go(-40, 35)
-        time.sleep(1.2)
-        self.connection.go(40, 0)
-        time.sleep(1.2)
-        self.connection.go(0, 180)
-        time.sleep(1)
-        self.connection.go(20, 20)
-        time.sleep(.4)
-        self.connection.go(40, -40)
-        time.sleep(.4)
-        self.connection.go(60, 60)
-        time.sleep(.4)
-        self.connection.go(50, -90)
-        time.sleep(2.1)
-        self.connection.go(45, 0)
-        time.sleep(0.7)
-        self.connection.go(30, 0)
-        time.sleep(0.7)
-        self.connection.go(15, 0)
-        time.sleep(0.7)
-        self.connection.stop()
+        dance_data = [[50, 0, 1], [0, 180, 1], [30, 40, 1], [30, -40, 1.3], [0, 180, 1.2], [30, 40, 1.2], [30, -40, 1.3], [-30, -40, 1.2], [0, 180, 0.3], [0, -180, 0.3],
+                      [-30, 40, 1.2], [40, 0, 1.2], [-30, 0, 0.3], [30, 0, 0.3], [50, 130, 2], [0, 180, 1.2], [0, -180, 1.2], [-30, 0, 0.8], [25, 50, 1.2], [50, 50, 1.2], [25, 50, 1.2],
+                      [50, 50, 1.1], [0, 220, 1.8], [-30, 0, 0.2], [30, 0, 0.2], [-30, 0, 0.2], [30, 0, 0.2], [-30, 0, 0.2], [30, 0, 0.2], [-30, 0, 0.2], [30, 0, 0.2], [-40, 35, 1.2],
+                      [40, 0, 1.2], [0, 180, 1], [20, 20, 0.4], [40, -40, 0.4], [60, 60, 0.4], [50, -90, 2.1], [45, 0, 0.7], [30, 0, 0.7], [15, 0, 0.7], [0, 0, 1]]
 
         fur_elise = [[(64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (59, 12), (62, 12), (60, 12), (57, 36), (48, 12), (52, 12), (57, 12), (59, 36)],
                      [(52, 12), (56, 12), (59, 12), (60, 36), (52, 12), (64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (59, 12), (62, 12), (60, 12), (57, 36)],
@@ -894,13 +815,18 @@ class Robot(object):
                      [(52, 12), (64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (59, 12), (62, 12), (60, 12), (57, 36), (48, 12), (52, 12), (57, 12), (59, 36)],
                      [(50, 12), (60, 12), (59, 12), (57, 60)]]
 
-#         is_playing_sensor = our_create.Sensors.song_playing
-#         for k in range(len(fur_elise)):
-#             self.connection.playSong(fur_elise[k])
-#             while True:
-#                 is_playing = self.connection.getSensor(is_playing_sensor)
-#                 if not is_playing:
-#                     break
+        is_playing_sensor = our_create.Sensors.song_playing
+        for k in range(len(fur_elise)):
+            self.connection.playSong(fur_elise[k])
+            j = 0
+            while True:
+                self.connection.go(dance_data[j][0], dance_data[j][1])
+                time.sleep(dance_data[j][2])
+                j += 1
+                is_playing = self.connection.getSensor(is_playing_sensor)
+                if not is_playing:
+                    break
+        self.connection.stop()
 
     def __repr__(self):
         """
