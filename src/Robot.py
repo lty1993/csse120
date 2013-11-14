@@ -214,10 +214,10 @@ class Robot(object):
                0 = Content length;
                1 = Other commands;
         cdefgh: If a == 1 and b == 1:
-               0 = Send done.
-               1 = Group done.
-               2 = Ignore this. Used in sending same data twice or more.
-               3 = Illegal verify code.
+               63 = Send done.
+               62 = Group done.
+               61 = Ignore this. Used in sending same data twice or more.
+               60 = Illegal verify code.
         Send a group of at max 63 bytecodes.
         Contributor: Xiangqing Zhang
         """
@@ -233,7 +233,7 @@ class Robot(object):
                 # Content length.
                 binary_send = [1, 0]
                 binary_send.extend(self.__to_binary(content_length, 6))
-                binary_expected = [0, 1, 0, 0, 0, 0, 0, 0]
+                binary_expected = [1, 1, 0, 0, 0, 0, 0, 0]
                 self.connection.sendIR(self.__from_binary(binary_send))
                 while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
                     self.connection.sendIR(self.__from_binary(binary_send))
@@ -241,8 +241,8 @@ class Robot(object):
                 for x in range(start, end):
                     if x>start and bytecode_list[x]==bytecode_list[x-1]:
                         # Ignore this.
-                        binary_send = [1, 1, 0, 1, 0, 0, 0, 0]
-                        binary_expected = [0, 1, 0, 1, 0, 0, 0, 0]
+                        binary_send = [1, 1, 1, 0, 1, 1, 1, 1]
+                        binary_expected = [1, 1, 0, 1, 0, 0, 0, 0]
                         self.connection.sendIR(self.__from_binary(binary_send))
                         while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
                             self.connection.sendIR(self.__from_binary(binary_send))
@@ -250,7 +250,7 @@ class Robot(object):
                     robotLogger.add("%s, %s"%(current_data, self.__to_binary(current_data, 7)), "debugggggg")
                     binary_send = [0]
                     binary_send.extend(self.__to_binary(current_data, 7))
-                    binary_expected = [1]
+                    binary_expected = [0]
                     binary_expected.extend(self.__to_binary(current_data, 7))
                     self.connection.sendIR(self.__from_binary(binary_send))
                     while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
@@ -258,9 +258,9 @@ class Robot(object):
                 # Verify code.
                 verify_bytecode = self.__verify_bytecode(bytecode_list[start:end])
                 verify_binary = self.__to_binary(verify_bytecode, 6)
-                binary_expected = [0, 0]
+                binary_expected = [1, 0]
                 binary_expected.extend(verify_binary)
-                binary_send = [1, 1, 1, 0, 0, 0, 0, 0]
+                binary_send = [1, 1, 0, 1, 1, 1, 1, 1]
                 self.connection.sendIR(self.__from_binary(binary_send))
                 bytecode_received = self.__receive_bytecode()
                 while self._send_bytecode_flag and bytecode_received==None:
@@ -270,15 +270,15 @@ class Robot(object):
                     success = True
                 else:
                     # Verify code illegal.
-                    binary_send = [1, 1, 1, 1, 0, 0, 0, 0]
-                    binary_expected = [0, 1, 1, 1, 0, 0, 0, 0]
+                    binary_send = [1, 1, 0, 0, 1, 1, 1, 1]
+                    binary_expected = [1, 1, 1, 1, 0, 0, 0, 0]
                     self.connection.sendIR(self.__from_binary(binary_send))
                     while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
                         self.connection.sendIR(self.__from_binary(binary_send))
             start += 63
         # Send done.
-        binary_send = [1, 1, 0, 0, 0, 0, 0, 0]
-        binary_expected = [0, 1, 1, 0, 0, 0, 0, 0]
+        binary_send = [1, 1, 1, 1, 1, 1, 1, 1]
+        binary_expected = [1, 1, 1, 0, 0, 0, 0, 0]
         self.connection.sendIR(self.__from_binary(binary_send))
         while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
             self.connection.sendIR(self.__from_binary(binary_send))
@@ -287,7 +287,7 @@ class Robot(object):
         Send a list of bytecodes using IR sender.
         ___ ___ ___ ___ ___ ___ ___ ___
          a   b   c   d   e   f   g   h
-        a: 1 = Confirm data; 0 = Special feedback
+        a: 0 = Confirm data; 1 = Special feedback
         b: If a == 0:
                0 = Verify code;
                1 = Other status;
@@ -306,7 +306,7 @@ class Robot(object):
         received_list = []
         received = False
         content_length = self.__from_binary(self.__to_binary(self.__receive_bytecode(-1))[2:])
-        self.connection.sendIR(self.__from_binary([0, 1, 0, 0, 0, 0, 0, 0]))
+        self.connection.sendIR(self.__from_binary([1, 1, 0, 0, 0, 0, 0, 0]))
         while self._receive_bytecode_flag and (not received):
             group_list = []
             each_data_pre = []
@@ -315,10 +315,10 @@ class Robot(object):
                 x += 1
                 each_data = self.__to_binary(self.__receive_bytecode(-1))
                 if each_data==[1, 1, 0, 1, 0, 0, 0, 0]:
-                    binary_send = [0, 1, 0, 1, 0, 0, 0, 0]
+                    binary_send = [1, 1, 0, 1, 0, 0, 0, 0]
                     self.connection.sendIR(self.__from_binary(binary_send))
                 else:
-                    binary_send = [1]
+                    binary_send = [0]
                     binary_send.extend(each_data[1:])
                     robotLogger.add("%s"%self.__from_binary(each_data), "received bytecode:")
                     self.connection.sendIR(self.__from_binary(binary_send))
@@ -328,22 +328,22 @@ class Robot(object):
                 each_data_pre = each_data
             group_done = self.__receive_bytecode(-1)
             verify_bytecode = self.__verify_bytecode(group_list)
-            verify_binary = [0, 0]
+            verify_binary = [1, 0]
             verify_binary.extend(self.__to_binary(verify_bytecode))
             self.connection.sendIR(self.__from_binary(binary_send))
             verify_result = self.__to_binary(self.__receive_bytecode(-1))
             if verify_result==[1, 1, 1, 1, 0, 0, 0, 0]:
-                binary_send = [0, 1, 1, 1, 0, 0, 0, 0]
+                binary_send = [1, 1, 1, 1, 0, 0, 0, 0]
                 self.connection.sendIR(self.__from_binary(binary_send))
                 group_list = []
             else:
                 if verify_result==[1, 1, 0, 0, 0, 0, 0, 0]:
-                    binary_send = [0, 1, 1, 0, 0, 0, 0, 0]
+                    binary_send = [1, 1, 1, 0, 0, 0, 0, 0]
                     self.connection.sendIR(self.__from_binary(binary_send))
                     received = True
                 else:
                     content_length = self.__from_binary(verify_result[2:])
-                    self.connection.sendIR(self.__from_binary([0, 1, 0, 0, 0, 0, 0, 0]))
+                    self.connection.sendIR(self.__from_binary([1, 1, 0, 0, 0, 0, 0, 0]))
             received_list.extend(group_list)
         return received_list
     def __receive_bytecode(self, wait_cycles=10):
