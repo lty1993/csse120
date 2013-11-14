@@ -320,7 +320,7 @@ class Robot(object):
                 else:
                     binary_send = [1]
                     binary_send.extend(each_data[1:])
-                    robotLogger.add("%s"%each_data, "received data:")
+                    robotLogger.add("%s"%self.__from_binary(each_data), "received bytecode:")
                     self.connection.sendIR(self.__from_binary(binary_send))
                     if each_data!=each_data_pre:
                         group_list.append(self.__from_binary(each_data[1:]))
