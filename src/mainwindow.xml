@@ -41,4 +41,5 @@
     <entry name="bytecode_entry" width='30' row_column="12,2"/>
     <button name="btn_bytecode_entry" text="Receiving Bytecode" row_column="12,3"></button>
     <button name="btn_map_GUI" text ="Coordinate Grid" row_column="13,1"></button>
+    <button name="btn_sing_and_dance" text ="Sing and Dance" row_column="13,2"></button>
 </root>

@@ -74,6 +74,8 @@ class Gui():
 
         self.config_widget("btn_map_GUI", {"command": lambda: self.map_gui_to_robot()})
 
+        self.config_widget("btn_sing_and_dance", {"command": lambda: self.robot.sing_and_dance()})
+
         self.log_frame = ttk.Frame(self.root)
         self.log_frame.grid()
         self.log_text = tkinter.Text(self.log_frame, width=150, height=20, wrap=tkinter.CHAR)  # state=tkinter.DISABLED)
@@ -87,6 +89,12 @@ class Gui():
         self.root.mainloop()
 
     def map_gui_to_robot(self):
+        """
+        This function calls the main function from the file 'map_GUI' to obtain the list of points
+        that the user clicked and then calls the 'grid_movement' function to exectute the task.
+        Feature 7-b
+        Contributor: Matthew O'Brien
+        """
         points = map_GUI.main()
         self.robot.grid_movement(points, self.speed.get(), self.rotation.get())
 
@@ -143,9 +151,7 @@ class Gui():
             except:
                 gui_result = [getattr(tkinter, widget_xml.tag.capitalize())(top_frame, **opt_list), row_column]
             return gui_result
-    def left_mouse_click(event):
-        canvas = event.widget
-        canvas.create_oval(event.x - 10, event.y - 10, event.x + 10, event.y + 10, fill='green', width=3)
+
     def exit(self):
         """
         Disconnect the robot when interrupted or terminated.

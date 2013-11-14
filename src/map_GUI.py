@@ -1,7 +1,14 @@
 import tkinter
 from tkinter import *
 import math
-
+"""
+This file creates a grid for the user to specify waypoints by clicking on the grid. The user
+can click multiple times with the left mouse and a new circle will pop up where the click was
+and a line will be drawn from the previous location. Right clicking will stop the loop and
+then execute the task.
+Feature 7-b
+Contributor: Matthew O'Brien
+"""
 def main():
     close_flag = [False]
 
@@ -14,6 +21,10 @@ def main():
     for k in range(40, 400, 40):  # Creates grid
         w.create_line(k, 0, k, 400)
         w.create_line(0, k, 400, k)
+
+    instructions = 'Left click to designate waypoints  \n'
+    instructions += 'then right click to execute.'
+    w.create_text(200, 20, text=instructions)
 
     w.create_oval(190, 190, 210, 210, fill="blue")
     previous_point = [200, 200]
