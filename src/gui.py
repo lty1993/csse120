@@ -5,7 +5,7 @@ from tkinter import ttk
 from logger import robotLogger
 from threading import Timer
 import map_GUI
-
+import sys
 
 class Gui():
     def __init__(self, port="sim"):
@@ -171,9 +171,16 @@ class Gui():
         self.robot.stop()
         self.robot.disconnect()
 
-def main():
-    g = Gui()
+def main(port = "sim"):
+    if sys.platform.lower() == "windows":
+        g = Gui(port)
+    else:
+        g = Gui(port)
     g.exit()
 
 if __name__ == '__main__':
-    main()
+    try:
+        port = sys.argv[1]
+    except:
+        port = "sim"
+    main(port)
