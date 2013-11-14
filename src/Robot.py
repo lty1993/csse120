@@ -255,7 +255,7 @@ class Robot(object):
                     while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
                         self.connection.sendIR(self.__from_binary(binary_send))
                 # Verify code.
-                verify_bytecode = self.__verify_bytecode(bytecode_list[start, end])
+                verify_bytecode = self.__verify_bytecode(bytecode_list[start:end])
                 verify_binary = self.__to_binary(verify_bytecode, 6)
                 binary_expected = [0, 0]
                 binary_expected.extend(verify_binary)
