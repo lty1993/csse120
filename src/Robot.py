@@ -21,7 +21,7 @@ class Robot(object):
         self.port = port
         self.eliza = eliza()
         self.job = None
-        self.robotEncryption = RobotEncryption(0)
+        self.robotEncryption = RobotEncryption(1)
         self._send_bytecode_flag = False
         self._receive_bytecode_flag = False
         self._take_other_robot_flag = False
@@ -316,33 +316,49 @@ class Robot(object):
         self._receive_bytecode_flag = True
         received_list = []
         received = False
-        content_length = self.__from_binary(self.__to_binary(self.__receive_bytecode(-1))[3:])
+        content_length = self.__from_binary(self.__to_binary(self.__receive_bytecode(-1, True))[3:])
+        robotLogger.add("Content Length: %d"%(content_length), "_receive_bytecode")
         self.connection.sendIR(self.__from_binary([1, 1, 1, 0, 0, 0, 0, 0]))
         while self._receive_bytecode_flag and (not received):
             group_list = []
             each_data_pre = []
             x = -1
-            while x < content_length:
+            while x < content_length-1:
                 x += 1
-                each_data = self.__to_binary(self.__receive_bytecode(-1))
+                each_data = self.__to_binary(self.__receive_bytecode(-1, True))
                 if each_data==[0, 1, 1, 0, 1, 0, 0, 0]:
                     binary_send = [1, 1, 1, 0, 1, 0, 0, 0]
                     self.connection.sendIR(self.__from_binary(binary_send))
+                    each_data_pre = []
+                    x -= 1
                 else:
+                    if each_data[1]==1:
+                        x -= 1
+                        self.connection.sendIR(self.__from_binary([1, 1, 1, 0, 0, 0, 0, 0]))
+                        continue
+                    elif each_data[0] == 1:
+                        x -= 1
+                        continue
                     binary_send = [1, 0]
                     binary_send.extend(each_data[2:])
                     robotLogger.add("%s"%self.__from_binary(each_data), "received bytecode:")
+                    robotLogger.add("%s"%self.robotEncryption._chr(self.__from_binary(each_data[2:])), "received char:")
+                    robotLogger.add("current, pre: %s, %s"%(each_data, each_data_pre), "received bytecode:")
                     self.connection.sendIR(self.__from_binary(binary_send))
                     if each_data != each_data_pre:
                         group_list.append(self.__from_binary(each_data[2:]))
+                        each_data_pre = each_data
+                    else:
                         x -= 1
-                each_data_pre = each_data
-            group_done = self.__receive_bytecode(-1)
+                robotLogger.add("%s"%group_list, "current received list:")
+            group_done = self.__receive_bytecode(-1, True)
             verify_bytecode = self.__verify_bytecode(group_list)
+            return group_list
+            robotLogger.add("%s"%verify_bytecode, "verify bytecode:")
             verify_binary = [1, 1, 0]
             verify_binary.extend(self.__to_binary(verify_bytecode, 5))
             self.connection.sendIR(self.__from_binary(binary_send))
-            verify_result = self.__to_binary(self.__receive_bytecode(-1))
+            verify_result = self.__to_binary(self.__receive_bytecode(-1, True))
             if verify_result==[0, 1, 1, 1, 1, 0, 0, 0]:
                 binary_send = [1, 1, 1, 1, 1, 0, 0, 0]
                 self.connection.sendIR(self.__from_binary(binary_send))
@@ -357,7 +373,7 @@ class Robot(object):
                     self.connection.sendIR(self.__from_binary([1, 1, 1, 0, 0, 0, 0, 0]))
             received_list.extend(group_list)
         return received_list
-    def __receive_bytecode(self, wait_cycles=10):
+    def __receive_bytecode(self, wait_cycles=10, is_receiver=False):
         """
         Wait until bytecode received. Will abort after wait_cycles.
         If wait_cycles==-1, it will wait forever until self.stop().
@@ -369,7 +385,13 @@ class Robot(object):
         while self.__receive_bytecode_flag and (wait_cycles == -1 or k < wait_cycles):
             sensor_values = self.connection.getSensor(sensor)
             robotLogger.add("bytecode: %d; binary: %s" % (sensor_values, self.__to_binary(sensor_values)), "__receive_bytecode")
-            if sensor_values != 255: return sensor_values
+            if sensor_values != 255:
+                if is_receiver:
+                    if self.__to_binary(sensor_values)[0]==0:
+                        return sensor_values
+                else:
+                    if self.__to_binary(sensor_values)[0]==1:
+                        return sensor_values
             time.sleep(self.ir_time)
             k += 1
         return None
@@ -711,6 +733,7 @@ class Robot(object):
         self._send_bytecode(self.robotEncryption.toIR(self.robotEncryption.encrypt(message)))
     def _decode_code_message(self, message):
         bytecode_list = self._receive_bytecode()
+        robotLogger.add("bytecode_list=%s"%bytecode_list, "_decode_code_message")
         message.set(self.robotEncryption.decrypt(self.robotEncryption.fromIR(bytecode_list)))
 
     def take_other_robot(self, speed, bytecode):
