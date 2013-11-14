@@ -80,8 +80,8 @@ class Gui():
         self.frame.children["chat_with_robot_entry"].bind("<Key-Return>", lambda event: self.robot.chat_with_robot(self.chat_message))
         self.config_widget("btn_chat_with_robot_entry", {"command": lambda: self.robot.chat_with_robot(self.chat_message)})
         
-        self.config_widget("btn_follow_other_robot", {"command": lambda: self.robot.follow_other_robot(self.chat_message)})
-        self.config_widget("btn_take_other_robot", {"command": lambda: self.robot.take_other_robot(self.chat_message)})
+        self.config_widget("btn_follow_other_robot", {"command": lambda: self.robot.follow_other_robot(self.speed.get(), self.bytecode.get())})
+        self.config_widget("btn_take_other_robot", {"command": lambda: self.robot.take_other_robot(self.speed.get(), self.bytecode.get())})
 
         self.config_widget("btn_map_GUI", {"command": lambda: self.map_gui_to_robot()})
 

@@ -145,8 +145,8 @@ class Robot(object):
         """
         robotLogger.add("%d,%d,%d" % (speed, rotation, seconds), "move_autonomously")
         self._job(self._move_autonomously, [speed, rotation, seconds], life_span=seconds)
-    def _move_autonomously(self, speed, rotation, seconds):
-        if rotation == 0:
+    def _move_autonomously(self, speed, rotation, seconds, no_seconds = False):
+        if not no_seconds and rotation == 0:
             distance_sensor = our_create.Sensors.distance  # Method 2
             self.connection.getSensor(distance_sensor)
             self.connection.go(speed, rotation)
@@ -173,7 +173,7 @@ class Robot(object):
     def _go_forward_until_black_line(self, speed, darkness):
         self._forward_until_black_line = True
         sensor = [our_create.Sensors.cliff_front_left_signal, our_create.Sensors.cliff_front_right_signal]
-        self._move_autonomously(speed, 0)
+        self._move_autonomously(speed, 0, 0, True)
         while self._forward_until_black_line:
             sensor_values = [self.connection.getSensor(sensor[0]), self.connection.getSensor(sensor[1])]
             if sensor_values[0] < darkness or sensor_values[1] < darkness: break
@@ -190,7 +190,7 @@ class Robot(object):
     def _go_forward_until_bumps(self, speed, bump_sensor):
         self._forward_until_bumps = True
         sensor = our_create.Sensors.bumps_and_wheel_drops
-        self._move_autonomously(speed, 0)
+        self._move_autonomously(speed, 0, 0, True)
         while self._forward_until_bumps:
             sensor_values = self.connection.getSensor(sensor)
             left_bumper_state = sensor_values[3]
@@ -567,7 +567,7 @@ class Robot(object):
     def _go_forward_until_ir_signal(self, speed, bytecode):
         self._forward_until_ir_signal = True
         sensor = our_create.Sensors.ir_byte
-        self._move_autonomously(speed, 0)
+        self._move_autonomously(speed, 0, 0, True)
         while self._forward_until_ir_signal:
             sensor_values = self.connection.getSensor(sensor)
             if sensor_values == bytecode:
@@ -585,7 +585,7 @@ class Robot(object):
         self._job(self._go_forward_until_stuck, [speed]);
     def _go_forward_until_stuck(self, speed):
         self._forward_until_stuck = True
-        self._move_autonomously(speed, 0)
+        self._move_autonomously(speed, 0, 0, True)
         sensor = our_create.Sensors.bumps_and_wheel_drops
         while self._forward_until_stuck:
             sensor_values = self.connection.getSensor(sensor)
@@ -593,7 +593,7 @@ class Robot(object):
             right_bumper_state = sensor_values[4]
             if left_bumper_state == 1 or right_bumper_state == 1:
                 total_time = 0
-                self._move_autonomously(speed, 45)
+                self._move_autonomously(speed, 45, 0, True)
                 while self._forward_until_stuck and total_time < 10:
                     time.sleep(0.05)
                     sensor_values = self.connection.getSensor(sensor)
@@ -601,11 +601,11 @@ class Robot(object):
                     right_bumper_state = sensor_values[4]
                     robotLogger.add("%d, %d" % (left_bumper_state, right_bumper_state), "_go_forward_until_stuck")
                     if left_bumper_state == 1 or right_bumper_state == 1:
-                        total_time += 0.05
+                        total_time += 0.1
                     else:
                         break
-                if total_time > 10: break
-                self._move_autonomously(speed, 0)
+                if total_time > 1: break
+                self._move_autonomously(speed, 0, 0, True)
             time.sleep(0.05)
         self.stop()
 
@@ -620,34 +620,34 @@ class Robot(object):
     def _teleport(self, command):
         if(command == "Forward"):
             if(self._teleportspeed[0] > 0):
-                self._move_autonomously(self._teleportspeed[0] + 10, 0)
+                self._move_autonomously(self._teleportspeed[0] + 10, 0, 0, True)
                 self._teleportspeed[0] += 10
             else:
-                self._move_autonomously(10, 0)
+                self._move_autonomously(10, 0, 0, True)
                 self._teleportspeed[0] = 10
                 self._teleportspeed[1] = 0
         if(command == "Backward"):
             if(self._teleportspeed[0] < 0):
-                self._move_autonomously(self._teleportspeed[0] - 10, 0)
+                self._move_autonomously(self._teleportspeed[0] - 10, 0, 0, True)
                 self._teleportspeed[0] -= 10
             else:
-                self._move_autonomously(-10, 0)
+                self._move_autonomously(-10, 0, 0, True)
                 self._teleportspeed[0] = -10
                 self._teleportspeed[1] = 0
         if(command == "Right"):
             if(self._teleportspeed[1] < 0):
-                self._move_autonomously(0, self._teleportspeed[1] - 30)
+                self._move_autonomously(0, self._teleportspeed[1] - 30, 0, True)
                 self._teleportspeed[1] += -30
             else:
-                self._move_autonomously(0, -30)
+                self._move_autonomously(0, -30, 0, True)
                 self._teleportspeed[1] = -30
                 self._teleportspeed[0] = 0
         if(command == "Left"):
             if(self._teleportspeed[1] > 0):
-                self._move_autonomously(0, self._teleportspeed[1] + 30)
+                self._move_autonomously(0, self._teleportspeed[1] + 30, 0, True)
                 self._teleportspeed[1] += 30
             else:
-                self._move_autonomously(0, 30)
+                self._move_autonomously(0, 30, 0, True)
                 self._teleportspeed[1] = 30
                 self._teleportspeed[0] = 0
 
@@ -718,7 +718,7 @@ class Robot(object):
         self._job(self._take_other_robot, [speed, bytecode])
     def _take_other_robot(self, speed, bytecode):
         self._take_other_robot_flag = True
-        robot.connection.go(speed, 0)
+        self.connection.go(speed, 0)
         sensor = our_create.Sensors.ir_byte
         sensor_distance = our_create.Sensors.distance
         is_discovered = False
@@ -740,7 +740,7 @@ class Robot(object):
                 distance_moved = 0
                 distance = distance * seconds * 10
                 self.connection.getSensor(sensor_distance)
-                robot.connection.go(speed, rotation)
+                self.connection.go(speed, rotation)
                 while distance_moved < distance:
                     self.connection.sendIR(bytecode_direction)
                     time.sleep(0.05)
