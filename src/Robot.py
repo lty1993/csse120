@@ -21,7 +21,7 @@ class Robot(object):
         self.port = port
         self.eliza = eliza()
         self.job = None
-        self.robotEncryption = RobotEncryption()
+        self.robotEncryption = RobotEncryption(0)
         self._send_bytecode_flag = False
         self._receive_bytecode_flag = False
         self._take_other_robot_flag = False
@@ -247,6 +247,7 @@ class Robot(object):
                         while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
                             self.connection.sendIR(self.__from_binary(binary_send))
                     current_data = bytecode_list[x]
+                    robotLogger.add("%s, %s"%(current_data, self.__to_binary(current_data, 7)), "debugggggg")
                     binary_send = [0]
                     binary_send.extend(self.__to_binary(current_data, 7))
                     binary_expected = [1]
@@ -319,6 +320,7 @@ class Robot(object):
                 else:
                     binary_send = [1]
                     binary_send.extend(each_data[1:])
+                    robotLogger.add("%s"%each_data, "received data:")
                     self.connection.sendIR(self.__from_binary(binary_send))
                     if each_data!=each_data_pre:
                         group_list.append(self.__from_binary(each_data[1:]))
