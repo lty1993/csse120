@@ -27,6 +27,4 @@ DATE-STARTED, DATE-DUE/ENDED.  DESCRIBE-TASK.  STATUS.  HOURS.
 11-12         11-12.            real tests     DONE     2
 11-13         11-13.             dance         DONE     2
 11-12         11-13.           sing&dance      DONE     1          
- 
-
-LOOK AT GRADING RUBRIC
+11-13         11-13.         merge&cleanup     DONE     1.5
