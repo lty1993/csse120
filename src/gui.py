@@ -51,7 +51,7 @@ class Gui():
 
         self.message = tkinter.StringVar()
         self.config_widget("de_en_code_message_entry", {"textvariable": self.message})
-        self.config_widget("btn_de_en_code_message", {"command": lambda: self.robot.btn_de_en_code_message(self.message)})
+        self.config_widget("btn_de_en_code_message", {"command": lambda: self.robot.de_en_code_message(self.message)})
 
         self.darkness = tkinter.IntVar()
         self.config_widget("darkness_entry", {"textvariable": self.darkness})
@@ -172,8 +172,8 @@ class Gui():
         self.robot.disconnect()
 
 def main(port = "sim"):
-    if sys.platform.lower() == "windows":
-        g = Gui(port)
+    if sys.platform.lower().startswith("win"):
+        g = Gui(14)
     else:
         g = Gui(port)
     g.exit()

@@ -280,7 +280,7 @@ class Robot(object):
         self.connection.sendIR(self.__from_binary(binary_send))
         while self._send_bytecode_flag and binary_expected!=self.__to_binary(self.__receive_bytecode()):
             self.connection.sendIR(self.__from_binary(binary_send))
-    def _receive_bytecode():
+    def _receive_bytecode(self):
         """
         Send a list of bytecodes using IR sender.
         ___ ___ ___ ___ ___ ___ ___ ___
@@ -689,9 +689,9 @@ class Robot(object):
         Contributor: Xiangqing Zhang
         """
         if message.get():
-            self._job(self._encode_code_message(), [message.get()])
+            self._job(self._encode_code_message, [message.get()])
         else:
-            self._job(self._decode_code_message(), [message])
+            self._job(self._decode_code_message, [message])
     def _encode_code_message(self, message):
         self._encode_message = True
         self._send_bytecode(self.robotEncryption.toIR(self.RobotEncryption.encrypt(message)))
