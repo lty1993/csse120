@@ -351,9 +351,10 @@ class Robot(object):
                     else:
                         x -= 1
                 robotLogger.add("%s"%group_list, "current received list:")
+                if len(group_list)==content_length:
+                    return group_list
             group_done = self.__receive_bytecode(-1, True)
             verify_bytecode = self.__verify_bytecode(group_list)
-            return group_list
             robotLogger.add("%s"%verify_bytecode, "verify bytecode:")
             verify_binary = [1, 1, 0]
             verify_binary.extend(self.__to_binary(verify_bytecode, 5))
@@ -768,13 +769,13 @@ class Robot(object):
                 else:
                     bytecode_direction = 2
                 rotation = random.randint(20, 40) * direction
-                seconds = random.randint(5)
+                seconds = random.randint(1, 5)
 
                 distance_moved = 0
-                distance = distance * seconds * 10
-                self.connection.getSensor(sensor_distance)
+                distance = speed * seconds * 10
                 self.connection.go(speed, rotation)
                 while distance_moved < distance:
+                    distance_moved += self.connection.getSensor(sensor_distance)
                     self.connection.sendIR(bytecode_direction)
                     time.sleep(0.05)
             elif is_discovered:

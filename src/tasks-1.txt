@@ -17,3 +17,8 @@ DATE-STARTED, DATE-DUE/ENDED.  DESCRIBE-TASK.  STATUS.  HOURS.
 10-31         11-06            ft-6a           DONE     2
 11-01         11-06            ft-3b           DONE     2
 11-03     11-05 [our_create.py] create TCP API DONE     2
+11-05     11-06 [our_create.py] TCP Port Listen DONE    1.5
+11-06     11-07 [our_create.py] Joystick Reader DONE    1
+11-08     11-09 [our_create.py] Circuit Design DONE     2
+11-10     11-11 [our_create.py] Serial Over Ethenet DONE 2
+11-12         11-13            ft-8b           DONE     2
