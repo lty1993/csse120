@@ -463,14 +463,14 @@ class Robot(object):
         self._log(wilma_bio, "_log_information")
         self.stop()
 
-    def grid_movement(self, coordinates, speed, rotation):
+    def grid_movement(self, coordinates, speed):
         """
         Moves robot to user-specified coordinates on an imaginary grid.
         Feature 7a-1
         Contributor: Matthew O'Brien
         """
-        self._job(self._grid_movement, [coordinates, speed, rotation])
-    def _grid_movement(self, coordinates, speed, rotation):
+        self._job(self._grid_movement, [coordinates, speed])
+    def _grid_movement(self, coordinates, speed):
         if coordinates == 'coordinates.txt':  # Coordinates can come from a file
             FO = open("coordinates.txt", "r")
             coordinates_from_file = FO.read()

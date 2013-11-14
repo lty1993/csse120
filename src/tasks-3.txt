@@ -7,29 +7,26 @@ For HOURS, use chunks of 0.5 to 2 hours -- end the line with the NUMBER.
 Your name: Matthew O'Brien
 
 DATE-STARTED, DATE-DUE/ENDED.  DESCRIBE-TASK.  STATUS.  HOURS.
-10-25         10-26. Integrate individual work.DONE.    1.
-10-25         10-25.           m3.             DONE.    0.5
+10-25         10-26. Integrate individual work.DONE     1.
+10-25         10-25.           m3.             DONE     0.5
 10-25         10-26.           merge work      DONE     1
-10-29         10-29.           f4.             DONE.    1.5
-10-29         10-31            f2              DONE.    1
+10-29         10-29.           f4.             DONE     1.5
+10-29         10-31            f2              DONE     1
 10-30         11-1.            f7a-1           DONE     2
 11-1          11-1.            f7a-2           DONE     1
-10-31         11-1.            f1              DONE.    1
+10-31         11-1.            f1              DONE     1
 11-4          11-6.            polar-grid      DONE     2
-11-7          11-7.            grid map        DONE    .5
-11-6          11-6.          move in curves    DONE    .5
+11-7          11-7.            grid map        DONE     .5
+11-6          11-6.          move in curves    DONE     .5
 11-7          11-7.         improve autonomous DONE     1
 11-4          11-7.            merge work      DONE     1
 11-10         11-10.             Map GUI       DONE     1.5
 11-11         11-11.        GUI map movement   DONE     2
 11-11         11-11.           Doc strings     DONE     .5
-11-11         11-12.          sing             DONE     2
-11-12         11-12.        real tests         DONE     2
-11-12         11-12.            sin curve    IN-PROGRESS1
+11-11         11-12.              sing         DONE     2
+11-12         11-12.            real tests     DONE     2
 11-13         11-13.             dance         DONE     2
-11-12         11-13.           sing&dance      DONE     .5      
+11-12         11-13.           sing&dance      DONE     1          
  
-
-add doc strings to each function or method
 
 LOOK AT GRADING RUBRIC

@@ -47,7 +47,7 @@ class Gui():
 
         self.coordinates = tkinter.StringVar()
         self.config_widget("grid_entry", {"textvariable": self.coordinates})
-        self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.coordinates.get(), self.speed.get(), self.rotation.get())})
+        self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.coordinates.get(), self.speed.get())})
 
         self.message = tkinter.IntVar()
         self.config_widget("de_en_code_message_entry", {"textvariable": self.message})
@@ -79,7 +79,7 @@ class Gui():
         self.config_widget("chat_with_robot_entry", {"textvariable": self.chat_message})
         self.frame.children["chat_with_robot_entry"].bind("<Key-Return>", lambda event: self.robot.chat_with_robot(self.chat_message))
         self.config_widget("btn_chat_with_robot_entry", {"command": lambda: self.robot.chat_with_robot(self.chat_message)})
-        
+
         self.config_widget("btn_follow_other_robot", {"command": lambda: self.robot.follow_other_robot(self.chat_message)})
         self.config_widget("btn_take_other_robot", {"command": lambda: self.robot.take_other_robot(self.chat_message)})
 
@@ -107,7 +107,7 @@ class Gui():
         Contributor: Matthew O'Brien
         """
         points = map_GUI.main()
-        self.robot.grid_movement(points, self.speed.get(), self.rotation.get())
+        self.robot.grid_movement(points, self.speed.get())
 
     def config_widget(self, widget_name, widget_options):
         """
