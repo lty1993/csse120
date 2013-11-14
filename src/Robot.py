@@ -303,8 +303,8 @@ class Robot(object):
         self._receive_bytecode_flag = True
         received_list = []
         received = False
-        content_length = self.__from_binary(self.__receive_bytecode(-1)[2:])
-        self.connection.sendIR([0, 1, 0, 0, 0, 0, 0, 0])
+        content_length = self.__to_binary(self.__receive_bytecode(-1))[2:]
+        self.connection.sendIR(self.__from_binary([0, 1, 0, 0, 0, 0, 0, 0]))
         while _receive_bytecode_flag and (not received):
             group_list = []
             each_data_pre = []
@@ -340,7 +340,7 @@ class Robot(object):
                     received = True
                 else:
                     content_length = self.__from_binary(verify_result[2:])
-                    self.connection.sendIR([0, 1, 0, 0, 0, 0, 0, 0])
+                    self.connection.sendIR(self.__from_binary([0, 1, 0, 0, 0, 0, 0, 0]))
             received_list.extend(group_list)
         return received_list
     def __receive_bytecode(self, wait_cycles=10):
@@ -399,7 +399,7 @@ class Robot(object):
         Contributor: Xiangqing Zhang
         """
         # TODO: Test in the REAL robot!
-        self._job(self._chat_with_another_robot, [bytecode_string.split(",")])
+        self._job(self._chat_with_another_robot, [[int(k) for k in bytecode_string.split(",")]])
     def _chat_with_another_robot(self, bytecode_list):
         self._send_bytecode(bytecode_list)
         # self._sendIR = True
