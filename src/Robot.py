@@ -303,7 +303,7 @@ class Robot(object):
         self._receive_bytecode_flag = True
         received_list = []
         received = False
-        content_length = self.__to_binary(self.__receive_bytecode(-1))[2:]
+        content_length = self.__from_binary(self.__to_binary(self.__receive_bytecode(-1))[2:])
         self.connection.sendIR(self.__from_binary([0, 1, 0, 0, 0, 0, 0, 0]))
         while self._receive_bytecode_flag and (not received):
             group_list = []
@@ -694,7 +694,7 @@ class Robot(object):
             self._job(self._decode_code_message, [message])
     def _encode_code_message(self, message):
         self._encode_message = True
-        self._send_bytecode(self.robotEncryption.toIR(self.RobotEncryption.encrypt(message)))
+        self._send_bytecode(self.robotEncryption.toIR(self.robotEncryption.encrypt(message)))
     def _decode_code_message(self, message):
         bytecode_list = self._receive_bytecode()
         message.set(robotEncryption.decrypt(robotEncryption.fromIR(bytecode_list)))
