@@ -49,7 +49,7 @@ class Gui():
         self.config_widget("grid_entry", {"textvariable": self.coordinates})
         self.config_widget("grid_button", {"command": lambda: self.robot.grid_movement(self.coordinates.get(), self.speed.get(), self.rotation.get())})
 
-        self.message = tkinter.IntVar()
+        self.message = tkinter.StringVar()
         self.config_widget("de_en_code_message_entry", {"textvariable": self.message})
         self.config_widget("btn_de_en_code_message", {"command": lambda: self.robot.btn_de_en_code_message(self.message)})
 
