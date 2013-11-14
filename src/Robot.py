@@ -145,19 +145,20 @@ class Robot(object):
         robotLogger.add("%d,%d,%d" % (speed, rotation, seconds), "move_autonomously")
         self._job(self._move_autonomously, [speed, rotation, seconds], life_span=seconds)
     def _move_autonomously(self, speed, rotation, seconds):
-#         self.connection.go(speed, rotation) # Method 1
-        distance_sensor = our_create.Sensors.distance  # Method 2
-        self.connection.getSensor(distance_sensor)
-        self.connection.go(speed, rotation)
+        if rotation == 0:
+            distance_sensor = our_create.Sensors.distance  # Method 2
+            self.connection.getSensor(distance_sensor)
+            self.connection.go(speed, rotation)
 
-        total = 0
-        while True:
-            distance = self.connection.getSensor(distance_sensor)
-            total += abs(distance)
-            if total >= abs(speed * seconds):
-                break
-        self.connection.stop()
-        print(speed * seconds, total)
+            total = 0
+            while True:
+                distance = self.connection.getSensor(distance_sensor)
+                total += abs(distance)
+                if total >= abs(10 * speed * seconds):
+                    break
+            self.connection.stop()
+        else:
+            self.connection.go(speed, rotation)
 
     def go_forward_until_black_line(self, speed, darkness=500):
         """
@@ -470,7 +471,7 @@ class Robot(object):
         """
         self._job(self._grid_movement, [coordinates, speed, rotation])
     def _grid_movement(self, coordinates, speed, rotation):
-        if coordinates == 'coordinates.txt':
+        if coordinates == 'coordinates.txt':  # Coordinates can come from a file
             FO = open("coordinates.txt", "r")
             coordinates_from_file = FO.read()
             FO.close()
@@ -478,16 +479,16 @@ class Robot(object):
             coordinates = [[0, 0]]
             for each_coordinate in coordinates_temp:
                 coordinates.append(each_coordinate.split(","))
-        elif type(coordinates) is list:
+        elif type(coordinates) is list:  # Coordinates coming from user clicks on map
             print(coordinates)
             coordinates_temp = []
             for k in range(len(coordinates) // 2):
                 coordinates_temp.append([coordinates[2 * k], coordinates[2 * k + 1]])
 
             coordinates = coordinates_temp
-            print(coordinates)
+#             print(coordinates)
 
-        else:
+        else:  # Coordinates coming from list entry in main GUI
             coordinates_temp = coordinates.split()
             coordinates = [[0, 0]]
             for each_coordinate in coordinates_temp:
@@ -515,7 +516,7 @@ class Robot(object):
             elif speed > 40:  # limit speed to 40 for accuracy
                 speed = max_speed
             unit_time = (10 / speed) * r
-            print(speed, unit_time, speed * unit_time)
+#             print(speed, unit_time, speed * unit_time)
 
             if x_distance == 0 and y_distance > 0:  # positive y-axis
                 degrees = no_rotation
@@ -540,12 +541,12 @@ class Robot(object):
             else:
                 pass
 
-            self.connection.go(0, degrees / 4)
-            time.sleep(4)
+            self.connection.go(0, degrees / 5)
+            time.sleep(5)
             self.connection.go(speed, 0)
-            time.sleep(unit_time)
-            self.connection.go(0, -degrees / 4)
-            time.sleep(4)
+            time.sleep(4 * unit_time)
+            self.connection.go(0, -degrees / 5)
+            time.sleep(5)
             self.connection.stop()
 
         self.stop()
@@ -788,6 +789,118 @@ class Robot(object):
         robotLogger.add(message.get(), "You say:", "INFO")
         robotLogger.add(self.eliza.respond(message.get()), "Wilma says:", "INFO")
         message.set("")
+
+    def sing_and_dance(self):
+        """
+        Robot will sing and dance for the user.
+        Feature 10
+        Contributor: Matthew O'Brien
+        """
+        self._job(self._sing_and_dance);
+    def _sing_and_dance(self):
+        self.connection.go(50, 0)
+        time.sleep(1)
+        self.connection.go(0, 180)
+        time.sleep(1)
+        self.connection.go(30, 40)
+        time.sleep(1)
+        self.connection.go(30, -40)
+        time.sleep(1.3)
+        self.connection.go(0, 180)
+        time.sleep(1.2)
+        self.connection.go(30, 40)
+        time.sleep(1.2)
+        self.connection.go(30, -40)
+        time.sleep(1.3)
+        self.connection.go(-30, -40)
+        time.sleep(1.2)
+        self.connection.go(0, 180)
+        time.sleep(0.3)
+        self.connection.go(0, -180)
+        time.sleep(0.3)
+        self.connection.go(-30, 40)
+        time.sleep(1.2)
+        self.connection.go(40, 0)
+        time.sleep(1.2)
+        self.connection.go(-30, 0)
+        time.sleep(.3)
+        self.connection.go(30, 0)
+        time.sleep(.3)
+        self.connection.go(50, 130)
+        time.sleep(2)
+        self.connection.go(0, 180)
+        time.sleep(1.2)
+        self.connection.go(0, -180)
+        time.sleep(1.2)
+        self.connection.go(-30, 0)
+        time.sleep(0.8)
+        self.connection.go(25, 50)
+        time.sleep(1.2)
+        self.connection.go(50, 50)
+        time.sleep(1.2)
+        self.connection.go(25, 50)
+        time.sleep(1.2)
+        self.connection.go(50, 50)
+        time.sleep(1.1)
+        self.connection.go(0, 220)
+        time.sleep(1.8)
+        self.connection.go(-30, 0)
+        time.sleep(.2)
+        self.connection.go(30, 0)
+        time.sleep(.2)
+        self.connection.go(-30, 0)
+        time.sleep(.2)
+        self.connection.go(30, 0)
+        time.sleep(.2)
+        self.connection.go(-30, 0)
+        time.sleep(.2)
+        self.connection.go(30, 0)
+        time.sleep(.2)
+        self.connection.go(-30, 0)
+        time.sleep(.2)
+        self.connection.go(30, 0)
+        time.sleep(.2)
+        self.connection.go(-40, 35)
+        time.sleep(1.2)
+        self.connection.go(40, 0)
+        time.sleep(1.2)
+        self.connection.go(0, 180)
+        time.sleep(1)
+        self.connection.go(20, 20)
+        time.sleep(.4)
+        self.connection.go(40, -40)
+        time.sleep(.4)
+        self.connection.go(60, 60)
+        time.sleep(.4)
+        self.connection.go(50, -90)
+        time.sleep(2.1)
+        self.connection.go(45, 0)
+        time.sleep(0.7)
+        self.connection.go(30, 0)
+        time.sleep(0.7)
+        self.connection.go(15, 0)
+        time.sleep(0.7)
+        self.connection.stop()
+
+        fur_elise = [[(64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (59, 12), (62, 12), (60, 12), (57, 36), (48, 12), (52, 12), (57, 12), (59, 36)],
+                     [(52, 12), (56, 12), (59, 12), (60, 36), (52, 12), (64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (59, 12), (62, 12), (60, 12), (57, 36)],
+                     [(48, 12), (52, 12), (57, 12), (59, 36), (52, 12), (60, 12), (59, 12), (57, 48)],
+                     [(64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (59, 12), (62, 12), (60, 12), (57, 36), (48, 12), (52, 12), (57, 12), (59, 36)],
+                     [(52, 12), (56, 12), (59, 12), (60, 36), (52, 12), (64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (59, 12), (62, 12), (60, 12), (57, 36)],
+                     [(48, 12), (52, 12), (57, 12), (59, 36), (52, 12), (60, 12), (59, 12), (57, 36), (59, 12), (60, 12), (62, 12), (64, 36)],
+                     [(55, 12), (65, 12), (64, 12), (62, 36), (53, 12), (64, 12), (62, 12), (60, 36), (52, 12), (62, 12), (60, 12), (59, 36), (52, 12), (52, 12), (64, 12), (52, 12)],
+                     [(64, 12), (64, 12), (76, 12), (63, 12), (64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (63, 12), (64, 12)],
+                     [(59, 12), (62, 12), (60, 12), (57, 36), (48, 12), (52, 12), (57, 12), (59, 36), (52, 12), (56, 12), (59, 12), (60, 36)],
+                     [(52, 12), (64, 12), (63, 12), (64, 12), (63, 12), (64, 12), (59, 12), (62, 12), (60, 12), (57, 36), (48, 12), (52, 12), (57, 12), (59, 36)],
+                     [(50, 12), (60, 12), (59, 12), (57, 60)]]
+
+#         is_playing_sensor = our_create.Sensors.song_playing
+#         for k in range(len(fur_elise)):
+#             self.connection.playSong(fur_elise[k])
+#             while True:
+#                 is_playing = self.connection.getSensor(is_playing_sensor)
+#                 if not is_playing:
+#                     break
 
     def __repr__(self):
         """

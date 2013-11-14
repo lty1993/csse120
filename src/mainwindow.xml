@@ -7,7 +7,7 @@
     <button name="btn_backward" text="Backward"  row_column="2,3"></button>
     <button name="btn_left" text="Left" row_column="3,1"></button>
     <button name="btn_right" text="Right" row_column="3,2"></button>
-    <button name="btn_map_GUI" text ="Coordinate Grid" row_column="3,3"></button>
+    <button name="btn_map_GUI" text ="Grid Map GUI" row_column="3,3"></button>
     <label name="speed_entry_label" row_column="4,1">
         <text>Enter a speed: </text>
     </label>
@@ -53,4 +53,5 @@
     <button name="btn_chat_with_robot_entry" text="Chat with Robot" row_column="13,3"></button>
     <button name="btn_follow_other_robot" text="Follow Other Robot" row_column="14,1"></button>
     <button name="btn_take_other_robot" text="Take Other Robot" row_column="14,2"></button>
+    <button name="btn_sing_and_dance" text ="Sing and Dance" row_column="14,3"></button>
 </root>
